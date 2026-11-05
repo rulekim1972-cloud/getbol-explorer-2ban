@@ -1,0 +1,751 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>버들 갯벌 탐험대</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap">
+<style>
+/* Layout: 갯벌 단면처럼 하늘-바다-펄 띠가 쌓인 화면, 탐험은 한 장씩 넘기는 카드 무대 */
+:root{
+  color-scheme: light;
+  --paper:#fffaf1; --sand:#f3e7d2; --mud:#6e5a47; --mud-lt:#b59f86; --mud-dk:#4a3a2d;
+  --sea:#2f8f98; --sea-lt:#cfeef0; --sky:#e6f5f6; --ink:#2b241e; --ink-soft:#6a5d51;
+  --crab:#e2673b; --sun:#f4c443; --good:#3a9459; --line:#e3d4bd;
+  --f-disp:"Jua","Malgun Gothic","맑은 고딕",system-ui,sans-serif;
+  --f-body:"Gowun Dodum","Malgun Gothic","맑은 고딕",system-ui,sans-serif;
+  --r:18px;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:18px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--sea);outline-offset:2px}
+h1,h2,h3{font-family:var(--f-disp);font-weight:400;text-wrap:balance;margin:0;line-height:1.25}
+.wrap{max-width:1080px;margin:0 auto;padding-block:14px 40px}
+.screen[hidden]{display:none!important}
+
+/* header */
+.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 0 14px;border-bottom:2px dashed var(--line);margin-bottom:18px}
+.top .brand{font-family:var(--f-disp);font-size:22px;color:var(--mud-dk);display:flex;align-items:center;gap:8px}
+.steps{display:flex;gap:6px;margin-left:auto}
+.steps span{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-disp);font-size:16px;background:var(--sand);color:var(--ink-soft);border:2px solid var(--line)}
+.steps span.on{background:var(--sea);color:#fff;border-color:var(--sea)}
+.steps span.ok{background:var(--good);color:#fff;border-color:var(--good)}
+
+.btn{border:0;border-radius:999px;padding:12px 24px;font-family:var(--f-disp);font-size:20px;background:var(--mud);color:#fff;box-shadow:0 4px 0 var(--mud-dk);transition:transform .1s}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--mud-dk)}
+.btn.sea{background:var(--sea);box-shadow:0 4px 0 #1f6a71}
+.btn.crab{background:var(--crab);box-shadow:0 4px 0 #a84320}
+.btn.ghost{background:var(--sand);color:var(--mud-dk);box-shadow:0 4px 0 var(--line)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.say{border:2px solid var(--line);background:#fff;border-radius:999px;width:44px;height:44px;display:inline-grid;place-items:center;flex:none}
+.say svg{width:22px;height:22px}
+.say.talking{background:var(--sun);border-color:var(--sun)}
+
+.mission{display:flex;gap:12px;align-items:flex-start;background:#fff;border:2px solid var(--line);border-radius:var(--r);padding:14px 16px;margin-bottom:16px}
+.mission .tag{font-family:var(--f-disp);color:var(--sea);font-size:16px}
+.mission h2{font-size:28px;color:var(--mud-dk)}
+.mission p{margin:4px 0 0;color:var(--ink-soft)}
+.mission .txt{flex:1;min-width:0}
+
+/* home */
+.hero{border-radius:28px;overflow:hidden;position:relative;background:linear-gradient(var(--sky) 0 38%,var(--sea-lt) 38% 50%,var(--mud-lt) 50% 100%);padding:34px 24px 26px;text-align:center}
+.hero .who{font-family:var(--f-disp);font-size:18px;color:var(--mud-dk);background:rgba(255,255,255,.75);display:inline-block;padding:4px 14px;border-radius:999px}
+.hero h1{font-size:clamp(44px,9vw,88px);color:var(--mud-dk);margin:14px 0 4px;letter-spacing:-1px}
+.hero h1 b{color:var(--crab);font-weight:400}
+.hero .sub{font-size:19px;color:var(--ink);margin:0 0 6px}
+.hero .unit{font-size:15px;color:var(--ink-soft)}
+.hero svg.crabs{width:min(520px,100%);height:auto;display:block;margin:6px auto 0}
+.join{background:#fff;border:2px solid var(--line);border-radius:var(--r);padding:18px;margin-top:18px;display:grid;gap:14px}
+.join .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.join label{font-family:var(--f-disp);font-size:19px;min-width:72px}
+.join input{font:inherit;font-size:20px;padding:10px 14px;border:2px solid var(--line);border-radius:12px;width:180px;max-width:100%}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:2px solid var(--line);background:var(--paper);border-radius:999px;padding:6px 14px;font-family:var(--f-disp);font-size:18px}
+.chip.on{background:var(--sea);border-color:var(--sea);color:#fff}
+.teacher-link{display:block;margin:22px auto 0;background:none;border:0;color:var(--ink-soft);font-size:15px;text-decoration:underline}
+
+/* map of missions */
+.missions{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.mcard{text-align:left;border:2px solid var(--line);background:#fff;border-radius:var(--r);padding:18px;display:flex;flex-direction:column;gap:8px;min-height:170px}
+.mcard .n{font-family:var(--f-disp);font-size:16px;color:var(--sea)}
+.mcard h3{font-size:24px;color:var(--mud-dk)}
+.mcard p{margin:0;color:var(--ink-soft);font-size:16px}
+.mcard .st{margin-top:auto;font-family:var(--f-disp);font-size:16px}
+.mcard.lock{opacity:.5;cursor:not-allowed}
+.mcard.done{border-color:var(--good)}
+.mcard.done .st{color:var(--good)}
+
+/* 탐험1 map */
+.two{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px}
+@media (max-width:760px){.two{grid-template-columns:1fr}}
+.panel{background:#fff;border:2px solid var(--line);border-radius:var(--r);padding:16px;min-width:0}
+.mapbox{background:var(--sea-lt);border-radius:var(--r);padding:8px}
+.mapbox svg{width:100%;height:auto;display:block;max-height:68vh}
+.spot{cursor:pointer}
+.spot .glow{fill:var(--sun);opacity:.55;transform-origin:center;transform-box:fill-box;animation:pulse 1.6s infinite}
+.spot .core{fill:var(--sun);stroke:#fff;stroke-width:2}
+.spot.found .glow{animation:none;opacity:0}
+.spot.found .core{fill:var(--good)}
+@keyframes pulse{0%{transform:scale(.6);opacity:.7}100%{transform:scale(1.8);opacity:0}}
+.counter{font-family:var(--f-disp);font-size:22px;color:var(--mud-dk)}
+.counter b{color:var(--crab);font-weight:400}
+.info{background:var(--sand);border-radius:14px;padding:14px;margin:12px 0;min-height:110px}
+.info h3{font-size:22px;color:var(--mud-dk)}
+.info p{margin:6px 0 0}
+.quiz{border-top:2px dashed var(--line);padding-top:14px;margin-top:6px}
+.quiz h3{font-size:22px;margin-bottom:10px}
+.opts{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.opt{border:2px solid var(--line);background:var(--paper);border-radius:14px;padding:10px 18px;font-family:var(--f-disp);font-size:20px}
+.opt.on{border-color:var(--sea);background:var(--sea-lt)}
+.opt.right{border-color:var(--good);background:#e2f3e7}
+.opt.wrong{border-color:var(--crab);background:#fbe5dc}
+.feedback{font-size:17px;margin:10px 0;min-height:1.6em}
+.feedback.good{color:var(--good)}
+.feedback.try{color:var(--crab)}
+.why{background:var(--sky);border-radius:14px;padding:12px 14px;margin-top:10px}
+.why b{font-family:var(--f-disp);font-weight:400;color:var(--sea)}
+
+/* 탐험2 scene */
+.scene-wrap{position:relative;border-radius:var(--r);overflow:hidden;border:2px solid var(--line);background:var(--sky);touch-action:manipulation}
+.scene-wrap svg{display:block;width:100%;height:auto}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:12px 0}
+.tool{border:3px solid var(--line);background:#fff;border-radius:16px;padding:8px 14px;display:flex;align-items:center;gap:8px;font-family:var(--f-disp);font-size:19px}
+.tool svg{width:30px;height:30px}
+.tool.on{border-color:var(--crab);background:#fff1ea}
+.tide{display:flex;align-items:center;gap:10px;background:#fff;border:2px solid var(--line);border-radius:16px;padding:8px 14px;flex-wrap:wrap}
+.tide label{font-family:var(--f-disp);font-size:18px}
+.tide input{width:180px;accent-color:var(--sea)}
+.toast{position:absolute;left:50%;top:14px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:8px 16px;border-radius:999px;font-size:16px;opacity:0;transition:opacity .25s;pointer-events:none;max-width:90%;text-align:center}
+.toast.show{opacity:.92}
+.crit{cursor:pointer;transition:opacity .25s}
+.crit.found{cursor:default}
+.hole{cursor:pointer}
+.dex{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:10px;margin-top:12px}
+.dexc{border:2px dashed var(--line);border-radius:14px;padding:8px;text-align:center;background:var(--paper)}
+.dexc svg{width:64px;height:64px}
+.dexc .nm{font-family:var(--f-disp);font-size:17px}
+.dexc.got{border-style:solid;border-color:var(--good);background:#fff}
+.dexc .where{font-size:13px;color:var(--ink-soft)}
+
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(43,36,30,.55);display:grid;place-items:center;padding:20px;z-index:30}
+.modal[hidden]{display:none!important}
+.mbox{background:#fff;border-radius:24px;max-width:460px;width:100%;padding:22px;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.25)}
+.mbox svg.big{width:150px;height:150px;animation:wiggle 1.2s ease-in-out infinite}
+@keyframes wiggle{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg) translateY(-3px)}}
+.mbox h3{font-size:30px;color:var(--mud-dk)}
+.mbox .where{display:inline-block;background:var(--sand);border-radius:999px;padding:2px 12px;font-size:15px;margin:6px 0}
+.mbox p{margin:8px 0 16px}
+.mbox .acts{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+
+/* 탐험3 cards */
+.decks{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.deck{background:#fff;border:2px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.deck.done{border-color:var(--good)}
+.deck .dh{display:flex;align-items:center;gap:8px}
+.deck .dh h3{font-size:21px;flex:1;color:var(--mud-dk)}
+.slide{border-radius:14px;padding:16px;min-height:190px;display:flex;flex-direction:column;gap:8px;justify-content:center}
+.slide .pg{font-size:13px;color:var(--ink-soft)}
+.slide .pic{height:80px;display:flex;justify-content:center}
+.slide .pic svg{height:80px;width:auto}
+.slide p{margin:0;font-size:18px}
+.slide .q{font-family:var(--f-disp);font-size:20px}
+.dnav{display:flex;gap:8px;justify-content:space-between;align-items:center}
+.dnav .btn{font-size:17px;padding:8px 16px}
+.qopts{display:grid;gap:8px}
+.qopts .opt{text-align:left;font-size:17px;font-family:var(--f-body);padding:8px 12px}
+.found-roles{margin-top:16px}
+.found-roles li{margin:4px 0}
+
+/* 탐험4 journal */
+.log{list-style:none;margin:0;padding:0;display:grid;gap:8px;max-height:520px;overflow:auto}
+.log li{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:baseline;background:var(--paper);border-radius:12px;padding:8px 12px;font-size:16px}
+.log .tm{font-variant-numeric:tabular-nums;color:var(--ink-soft);font-size:13px}
+.log .cat{font-family:var(--f-disp);font-size:14px;border-radius:999px;padding:0 8px;margin-right:6px;color:#fff}
+.cat.place{background:var(--sea)} .cat.bio{background:var(--crab)} .cat.role{background:var(--good)}
+.keys{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+@media (max-width:520px){.keys{grid-template-columns:1fr}}
+.key{border:2px solid var(--line);border-radius:14px;padding:10px;background:var(--paper);text-align:left;font-size:15px}
+.key b{display:block;font-family:var(--f-disp);font-weight:400;font-size:18px;color:var(--mud-dk)}
+.key.on{border-color:var(--sea);background:var(--sea-lt)}
+.frame{display:grid;gap:10px;margin-top:8px}
+.frame label{font-family:var(--f-disp);font-size:18px;color:var(--mud-dk)}
+.frame .line{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.frame .line span{font-size:18px}
+.frame input,.frame textarea{font:inherit;font-size:18px;border:2px solid var(--line);border-radius:12px;padding:8px 12px;flex:1;min-width:160px;background:#fff}
+.frame textarea{resize:vertical;min-height:64px;width:100%}
+.clues{display:flex;gap:6px;flex-wrap:wrap}
+.clue{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:2px 10px;font-size:14px}
+.example{background:var(--sky);border-radius:14px;padding:12px;margin-top:10px;font-size:16px}
+
+/* badge + card */
+.badges{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.badge{border:3px solid var(--line);background:#fff;border-radius:var(--r);padding:16px;text-align:center;display:grid;gap:6px;justify-items:center}
+.badge svg{width:96px;height:96px}
+.badge b{font-family:var(--f-disp);font-weight:400;font-size:26px}
+.badge span{font-size:15px;color:var(--ink-soft)}
+.badge.on{border-color:var(--crab);background:#fff4ee}
+.card{max-width:640px;margin:0 auto;background:#fff;border:4px solid var(--mud);border-radius:28px;overflow:hidden}
+.card .band{background:linear-gradient(var(--sea) 0 55%,var(--mud-lt) 55%);color:#fff;padding:18px 22px 26px;position:relative}
+.card .band h2{font-size:30px}
+.card .band .num{font-size:16px;opacity:.95}
+.card .band svg{position:absolute;right:16px;top:12px;width:92px;height:92px}
+.card .body{padding:18px 22px 22px;display:grid;gap:12px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{background:var(--sand);border-radius:14px;padding:10px;text-align:center}
+.stat b{display:block;font-family:var(--f-disp);font-weight:400;font-size:30px;color:var(--mud-dk);font-variant-numeric:tabular-nums}
+.stat span{font-size:14px}
+.card blockquote{margin:0;background:var(--paper);border-left:6px solid var(--crab);border-radius:8px;padding:10px 14px;font-size:18px}
+.card .foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;font-size:14px;color:var(--ink-soft);border-top:2px dashed var(--line);padding-top:10px}
+.show-t{text-align:center;font-family:var(--f-disp);font-size:20px;color:var(--sea);margin:16px 0 8px}
+
+/* teacher */
+.tgrid{display:grid;grid-template-columns:minmax(0,1fr);gap:18px}
+.score{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+@media (max-width:640px){.score{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.team{border-radius:var(--r);padding:14px 10px;text-align:center;color:#fff;display:grid;gap:8px}
+.team h3{font-size:24px}
+.team .pts{font-family:var(--f-disp);font-size:64px;line-height:1;font-variant-numeric:tabular-nums}
+.team .bar{height:12px;background:rgba(255,255,255,.35);border-radius:99px;overflow:hidden}
+.team .bar i{display:block;height:100%;background:#fff;border-radius:99px;transition:width .4s}
+.team .tb{display:flex;gap:6px;justify-content:center}
+.team .tb button{border:0;border-radius:12px;background:rgba(255,255,255,.9);color:var(--ink);font-family:var(--f-disp);font-size:24px;width:52px;height:46px}
+.team.lead{outline:5px solid var(--sun);outline-offset:2px}
+.t1{background:#2f8f98}.t2{background:#e2673b}.t3{background:#5a8f3a}.t4{background:#7a63b5}.t5{background:#b48a1f}
+.sumrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.pill{border-radius:999px;padding:4px 14px;font-family:var(--f-disp);font-size:18px;background:var(--sand)}
+.pill.d{background:#e2f3e7;color:var(--good)} .pill.g{background:#fff4d6;color:#8a6510}
+.roster{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-top:12px}
+.stu{border:2px solid var(--line);background:#fff;border-radius:14px;padding:10px 8px;text-align:center;display:grid;gap:2px}
+.stu .no{font-size:13px;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.stu .nm{font-family:var(--f-disp);font-size:20px}
+.stu .s{font-size:13px}
+.stu.go{border-color:var(--sun);background:#fffaeb}
+.stu.done{border-color:var(--good);background:#e9f6ed}
+.stu.done .s{color:var(--good)}
+.store-note{font-size:14px;color:var(--ink-soft)}
+.confirm{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+textarea#names{width:100%;min-height:150px;font:inherit;font-size:17px;border:2px solid var(--line);border-radius:12px;padding:10px}
+.small{font-size:15px;color:var(--ink-soft)}
+.right{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:16px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body>
+
+<div class="wrap">
+
+<!-- ===== 첫 화면 ===== -->
+<section class="screen" id="s-home">
+  <div class="hero">
+    <span class="who">3학년 2반 임혜란샘</span>
+    <h1>버들 <b>갯벌</b> 탐험대</h1>
+    <p class="sub">바닷물이 빠져나간 넓은 갯벌로 탐험을 떠나 볼까요?</p>
+    <p class="unit">3학년 2학기 과학 · 2. 지구와 바다</p>
+    <svg class="crabs" viewBox="0 0 520 150" aria-hidden="true" id="hero-art"></svg>
+  </div>
+  <div class="join">
+    <div class="row"><label for="in-name">이름</label><input id="in-name" maxlength="8" autocomplete="off" placeholder="이름을 써요"></div>
+    <div class="row"><label for="in-num">번호</label><input id="in-num" type="number" min="1" max="22" inputmode="numeric" placeholder="1~22" style="width:120px"></div>
+    <div class="row"><label>모둠</label><div class="chips" id="grp"></div></div>
+    <div class="row" style="justify-content:space-between">
+      <span class="small" id="join-msg">이름과 모둠을 고르면 탐험을 시작할 수 있어요.</span>
+      <button class="btn crab" id="start">탐험 시작하기</button>
+    </div>
+  </div>
+  <button class="teacher-link" id="to-teacher">선생님 화면 열기</button>
+</section>
+
+<!-- 공통 머리 -->
+<header class="top" id="topbar" hidden>
+  <div class="brand"><svg width="30" height="30" viewBox="-30 -30 60 60" id="mini-crab"></svg>버들 갯벌 탐험대</div>
+  <div class="steps" id="steps"><span>1</span><span>2</span><span>3</span><span>4</span></div>
+</header>
+
+<!-- ===== 탐험 목록 ===== -->
+<section class="screen" id="s-map" hidden>
+  <div class="mission"><div class="txt"><div class="tag" id="hello">탐험대원</div><h2>오늘의 탐험 지도</h2><p>탐험을 하나씩 마치면 다음 탐험이 열려요. 마지막에는 탐험 배지와 완료 카드를 받아요.</p></div><button class="say" data-say="오늘의 탐험 지도. 탐험을 하나씩 마치면 다음 탐험이 열려요. 마지막에는 탐험 배지와 완료 카드를 받아요." aria-label="읽어 주기"></button></div>
+  <div class="missions" id="mlist"></div>
+</section>
+
+<!-- ===== 탐험1 ===== -->
+<section class="screen" id="s-e1" hidden>
+  <div class="mission"><div class="txt"><div class="tag">탐험 1</div><h2>갯벌은 어디에 있을까?</h2><p>지도에서 반짝이는 노란 빛 6곳을 모두 눌러 보세요. 다 찾으면 퀴즈가 나와요.</p></div><button class="say" data-say="탐험 1. 갯벌은 어디에 있을까? 지도에서 반짝이는 노란 빛 6곳을 모두 눌러 보세요. 다 찾으면 퀴즈가 나와요." aria-label="읽어 주기"></button></div>
+  <div class="two">
+    <div class="mapbox"><svg viewBox="0 0 320 420" id="kmap" role="img" aria-label="우리나라 지도"></svg></div>
+    <div class="panel">
+      <div class="counter">찾은 갯벌 <b id="c1">0</b> / 6</div>
+      <div class="info" id="spot-info"><h3>어디부터 찾아볼까요?</h3><p>바닷가를 따라 반짝이는 빛을 눌러 보세요.</p></div>
+      <div class="quiz" id="q1" hidden>
+        <h3>퀴즈! 갯벌이 많은 해안을 모두 골라요</h3>
+        <div class="opts" id="q1opts"></div>
+        <button class="btn sea" id="q1check">정답 확인</button>
+        <div class="feedback" id="q1fb"></div>
+        <div class="why" id="q1why" hidden><b>왜 서해안과 남해안일까요?</b><br>밀물과 썰물 때 바닷물 높이 차이가 크고, 바닷가 땅이 완만하게 넓게 펼쳐져 있어서 썰물 때 넓은 갯벌이 드러나요. 동해안은 바닷물 높이 차이가 작고 바다가 금방 깊어져요.</div>
+      </div>
+      <div class="right"><button class="btn ghost" data-go="map">탐험 지도</button><button class="btn crab" id="e1next" hidden>다음 탐험: 생물 찾기</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 탐험2 ===== -->
+<section class="screen" id="s-e2" hidden>
+  <div class="mission"><div class="txt"><div class="tag">탐험 2</div><h2>갯벌 속 생물을 찾아라!</h2><p id="e2help">먼저 막대를 썰물 쪽으로 밀어 바닷물을 빼 보세요. 그다음 돋보기로 땅 위 생물을, 삽으로 구멍 속 생물을 찾아요.</p></div><button class="say" data-say="탐험 2. 갯벌 속 생물을 찾아라! 먼저 막대를 썰물 쪽으로 밀어 바닷물을 빼 보세요. 그다음 돋보기로 땅 위 생물을 찾고, 구멍이 있는 곳은 삽으로 두 번 파 보세요. 숨어 있는 생물 8종 가운데 6종 이상 찾아보세요." aria-label="읽어 주기"></button></div>
+  <div class="toolbar">
+    <div class="tide"><label for="tide">밀물</label><input type="range" id="tide" min="0" max="100" value="100"><label for="tide">썰물</label></div>
+    <button class="tool on" data-tool="lens"><svg viewBox="0 0 30 30"><circle cx="12" cy="12" r="8" fill="#cfeef0" stroke="#2b241e" stroke-width="3"/><path d="M18 18l8 8" stroke="#2b241e" stroke-width="4" stroke-linecap="round"/></svg>돋보기</button>
+    <button class="tool" data-tool="shovel"><svg viewBox="0 0 30 30"><path d="M15 3v14" stroke="#8a5a2b" stroke-width="4" stroke-linecap="round"/><path d="M8 16h14l-2 8q-5 4-10 0z" fill="#9aa3a8" stroke="#2b241e" stroke-width="2"/></svg>삽</button>
+    <span class="counter" style="margin-left:auto">찾은 생물 <b id="c2">0</b> / 8</span>
+  </div>
+  <div class="scene-wrap"><svg viewBox="0 0 800 460" id="scene"></svg><div class="toast" id="toast"></div></div>
+  <div class="panel" style="margin-top:14px">
+    <h3 style="font-size:22px;color:var(--mud-dk)">나의 생물 도감</h3>
+    <div class="dex" id="dex"></div>
+  </div>
+  <div class="right"><button class="btn ghost" data-go="map">탐험 지도</button><button class="btn crab" id="e2next" disabled>6종을 찾으면 다음 탐험이 열려요</button></div>
+</section>
+
+<!-- ===== 탐험3 ===== -->
+<section class="screen" id="s-e3" hidden>
+  <div class="mission"><div class="txt"><div class="tag">탐험 3</div><h2>갯벌은 어떤 일을 할까?</h2><p>카드뉴스 3묶음을 끝까지 넘겨 읽고, 마지막 장의 질문에 답해 보세요.</p></div><button class="say" data-say="탐험 3. 갯벌은 어떤 일을 할까? 카드뉴스 3묶음을 끝까지 넘겨 읽고, 마지막 장의 질문에 답해 보세요." aria-label="읽어 주기"></button></div>
+  <div class="decks" id="decks"></div>
+  <div class="panel found-roles"><h3 style="font-size:22px;color:var(--mud-dk)">내가 찾아낸 갯벌의 역할</h3><ul id="roles"><li class="small">카드뉴스 질문에 답하면 여기에 적혀요.</li></ul></div>
+  <div class="right"><button class="btn ghost" data-go="map">탐험 지도</button><button class="btn crab" id="e3next" disabled>탐험 일지 쓰러 가기</button></div>
+</section>
+
+<!-- ===== 탐험4 ===== -->
+<section class="screen" id="s-e4" hidden>
+  <div class="mission"><div class="txt"><div class="tag">탐험 4</div><h2>갯벌은 왜 소중할까?</h2><p>왼쪽 일지에는 탐험하면서 찾은 것이 저절로 적혀 있어요. 일지를 읽고 갯벌의 가치를 써 보세요.</p></div><button class="say" data-say="탐험 4. 갯벌은 왜 소중할까? 왼쪽 일지에는 탐험하면서 찾은 것이 저절로 적혀 있어요. 가치란 어떤 것이 우리와 자연에게 얼마나 소중하고 쓸모 있는지를 말해요. 갯벌이 없으면 누가 곤란할까 생각해 보고, 갯벌의 가치를 써 보세요." aria-label="읽어 주기"></button></div>
+  <div class="two">
+    <div class="panel"><h3 style="font-size:22px;color:var(--mud-dk);margin-bottom:10px">갯벌 탐험 일지</h3><ul class="log" id="log"></ul></div>
+    <div class="panel">
+      <p style="margin:0"><b style="font-family:var(--f-disp);font-weight:400;color:var(--sea);font-size:19px">가치란?</b> 어떤 것이 우리와 자연에게 얼마나 소중하고 쓸모 있는지를 말해요.</p>
+      <p class="small" style="margin:6px 0 0">생각 열쇠 하나를 골라 보세요. 갯벌이 없으면 누가 곤란할까요?</p>
+      <div class="keys" id="keys">
+        <button class="key" data-k="bio"><b>생물에게</b>갯벌은 생물들에게 어떤 곳일까?</button>
+        <button class="key" data-k="people"><b>사람에게</b>사람들은 무엇을 얻고 무엇을 지킬까?</button>
+        <button class="key" data-k="nature"><b>자연에게</b>바다와 자연을 위해 어떤 일을 할까?</button>
+      </div>
+      <div class="frame">
+        <label for="w1">1. 갯벌은 어떤 가치가 있나요?</label>
+        <div class="line"><span>갯벌은</span><input id="w1" placeholder="생물들이 살아가는 집이 되어 주는"><span>가치가 있어요.</span></div>
+        <label for="w2">2. 왜 그렇게 생각했나요?</label>
+        <div class="clues" id="clues"></div>
+        <div class="line"><span>왜냐하면</span><input id="w2" placeholder="탐험에서 발견한 것을 써요"><span>때문이에요.</span></div>
+        <label for="w3">3. 만약 갯벌이 없어진다면?</label>
+        <textarea id="w3" placeholder="만약 갯벌이 없어진다면"></textarea>
+      </div>
+      <button class="btn ghost" id="ex-btn" style="margin-top:10px;font-size:17px">예시 보기</button>
+      <div class="example" id="ex" hidden>
+        <p style="margin:0 0 6px"><b>예시 1</b> 갯벌은 생물들이 살아가는 집이 되어 주는 가치가 있어요. 왜냐하면 칠게와 갯지렁이가 갯벌 속에 구멍을 파고 살고 있었기 때문이에요.</p>
+        <p style="margin:0"><b>예시 2</b> 갯벌은 바다를 깨끗하게 해 주는 가치가 있어요. 왜냐하면 바지락이 바닷물을 걸러 먹고, 갯벌 흙이 더러운 물질을 걸러 주기 때문이에요.</p>
+      </div>
+      <div class="feedback try" id="e4fb"></div>
+      <div class="right"><button class="btn ghost" data-go="map">탐험 지도</button><button class="btn crab" id="e4next">배지 받으러 가기</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 배지 ===== -->
+<section class="screen" id="s-badge" hidden>
+  <div class="mission"><div class="txt"><div class="tag">마지막</div><h2>오늘 나는 어떤 가치를 실천했나요?</h2><p>우리 반 가치 가운데 오늘 탐험에서 내가 실천한 것을 하나 골라요. 그 배지를 받아요.</p></div><button class="say" data-say="오늘 나는 어떤 가치를 실천했나요? 자립, 성장, 기여, 책임 가운데 오늘 탐험에서 내가 실천한 것을 하나 골라요." aria-label="읽어 주기"></button></div>
+  <div class="badges" id="badges"></div>
+  <div class="right"><button class="btn crab" id="badge-next" disabled>완료 카드 받기</button></div>
+</section>
+
+<!-- ===== 완료 카드 ===== -->
+<section class="screen" id="s-card" hidden>
+  <div class="card" id="card"></div>
+  <p class="show-t">이 화면을 선생님께 보여 주세요!</p>
+  <div class="right" style="justify-content:center"><button class="btn ghost" data-go="map">탐험 지도 다시 보기</button><button class="btn ghost" id="restart">처음으로</button></div>
+</section>
+
+<!-- ===== 선생님 화면 ===== -->
+<section class="screen" id="s-teacher" hidden>
+  <div class="mission"><div class="txt"><div class="tag">선생님 화면 · 교실 TV용</div><h2>버들 갯벌 탐험대 상황판</h2><p class="store-note" id="store-note">저장 위치를 확인하는 중이에요.</p></div></div>
+  <div class="tgrid">
+    <div class="panel">
+      <div class="sumrow" style="justify-content:space-between"><h3 style="font-size:24px;color:var(--mud-dk)">5모둠 점수판</h3><span class="small">탐험을 마친 모둠이 나와서 눌러요</span></div>
+      <div class="score" id="score" style="margin-top:12px"></div>
+    </div>
+    <div class="panel">
+      <div class="sumrow" style="justify-content:space-between">
+        <h3 style="font-size:24px;color:var(--mud-dk)">우리 반 탐험 현황</h3>
+        <div class="sumrow"><span class="pill" id="p-wait">시작 전 22</span><span class="pill g" id="p-go">탐험 중 0</span><span class="pill d" id="p-done">완료 0</span></div>
+      </div>
+      <p class="small" style="margin:6px 0 0">이름을 누를 때마다 시작 전, 탐험 중, 완료로 바뀌어요. 아이의 완료 카드를 확인하고 완료로 눌러 주세요.</p>
+      <div class="roster" id="roster"></div>
+      <div class="right">
+        <button class="btn ghost" id="edit-names" style="font-size:17px">이름 넣기</button>
+        <span class="confirm" id="reset-wrap"><button class="btn ghost" id="reset" style="font-size:17px">새 수업 시작</button></span>
+      </div>
+      <div id="names-box" hidden style="margin-top:12px">
+        <label for="names" class="small">한 줄에 한 명씩, 1번부터 차례로 붙여 넣으세요.</label>
+        <textarea id="names"></textarea>
+        <div class="right"><button class="btn sea" id="save-names" style="font-size:17px">이름 저장</button></div>
+      </div>
+    </div>
+  </div>
+  <div class="right"><button class="btn ghost" id="t-home">첫 화면으로</button></div>
+</section>
+</div>
+
+<div class="modal" id="modal" hidden><div class="mbox" id="mbox"></div></div>
+
+<script>
+'use strict';
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const SPK='<svg viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z" fill="#2b241e"/><path d="M16 8q3 4 0 8M18.5 5.5q5 6.5 0 13" stroke="#2b241e" stroke-width="2" fill="none" stroke-linecap="round"/></svg>';
+
+/* ---------- 읽어 주기 ---------- */
+let koVoice=null;
+function pickVoice(){ try{ const v=speechSynthesis.getVoices(); koVoice=v.find(x=>/ko/i.test(x.lang))||null; }catch(e){} }
+try{ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; }catch(e){}
+function speak(text,btn){
+  try{
+    speechSynthesis.cancel(); $$('.say.talking').forEach(b=>b.classList.remove('talking'));
+    const u=new SpeechSynthesisUtterance(text); u.lang='ko-KR'; u.rate=.92; if(koVoice) u.voice=koVoice;
+    if(btn){ btn.classList.add('talking'); u.onend=u.onerror=()=>btn.classList.remove('talking'); }
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+document.addEventListener('click',e=>{ const b=e.target.closest('.say'); if(b) speak(b.dataset.say,b); });
+function fillSay(){ $$('.say').forEach(b=>{ if(!b.innerHTML) b.innerHTML=SPK; }); }
+
+/* ---------- 생물 그림 ---------- */
+function crab(body,claw,big){
+  const legs=[-1,1].map(s=>[0,1,2].map(i=>`<path d="M${s*10} ${2+i*4} q${s*10} ${-2+i*2} ${s*16} ${6+i*3}" stroke="${body}" stroke-width="3" fill="none" stroke-linecap="round"/>`).join('')).join('');
+  const L=`<circle cx="-15" cy="-10" r="5" fill="${claw}"/><path d="M-9 -4 L-14 -9" stroke="${claw}" stroke-width="3"/>`;
+  const R=big?`<ellipse cx="18" cy="-14" rx="11" ry="8" fill="${claw}" transform="rotate(-25 18 -14)"/><path d="M9 -4 L15 -10" stroke="${claw}" stroke-width="4"/>`:`<circle cx="15" cy="-10" r="5" fill="${claw}"/><path d="M9 -4 L14 -9" stroke="${claw}" stroke-width="3"/>`;
+  return `${legs}${L}${R}<ellipse cx="0" cy="2" rx="13" ry="10" fill="${body}"/><path d="M-4 -7v-7M4 -7v-7" stroke="${body}" stroke-width="2.5"/><circle cx="-4" cy="-15" r="2.6" fill="#1b1b1b"/><circle cx="4" cy="-15" r="2.6" fill="#1b1b1b"/>`;
+}
+const ART={
+  chilge:()=>crab('#8a7a5e','#8a7a5e',false),
+  nongge:()=>crab('#6b6f4a','#e0472a',true),
+  jjang:()=>`<path d="M-24 4 Q-8 -12 14 -4 L26 -10 L24 6 L14 4 Q-6 14 -24 4z" fill="#7b7463"/><circle cx="-14" cy="-6" r="4.5" fill="#fff"/><circle cx="-14" cy="-6" r="2.4" fill="#111"/><circle cx="-6" cy="-9" r="4.5" fill="#fff"/><circle cx="-6" cy="-9" r="2.4" fill="#111"/><circle cx="2" cy="0" r="1.6" fill="#7fd0ff"/><circle cx="8" cy="-2" r="1.6" fill="#7fd0ff"/><circle cx="-2" cy="4" r="1.6" fill="#7fd0ff"/><path d="M-6 8 q-4 8 -10 8" stroke="#6a6352" stroke-width="3" fill="none"/>`,
+  gogung:()=>`<path d="M-16 12 Q-14 -18 6 -22 Q14 -6 18 12z" fill="#9c7a5a"/><path d="M-12 6 Q2 -2 16 6M-8 -4 Q4 -10 12 -4M-2 -14 Q4 -16 8 -14" stroke="#5e4630" stroke-width="2.5" fill="none"/><ellipse cx="0" cy="13" rx="18" ry="4" fill="#5e4630"/>`,
+  worm:()=>`<path d="M-24 6 Q-16 -12 -6 2 T12 0 T24 -8" stroke="#c4533f" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M-20 0v4M-12 -4v5M-4 2v4M4 2v4M12 -1v4M19 -5v4" stroke="#8e3426" stroke-width="1.6"/><circle cx="24" cy="-8" r="2" fill="#111"/>`,
+  clam:()=>`<path d="M-22 6 Q-20 -18 0 -18 Q20 -18 22 6 Q0 16 -22 6z" fill="#d9c3a2"/><path d="M-14 4 Q-12 -10 0 -12M-6 6 Q-4 -6 4 -12M6 6 Q10 -4 12 -12M14 4 Q18 -4 18 -8" stroke="#8c6d49" stroke-width="2" fill="none"/><path d="M-22 6 Q0 16 22 6" stroke="#6e5434" stroke-width="2.5" fill="none"/>`,
+  razor:()=>`<rect x="-26" y="-7" width="52" height="14" rx="7" fill="#c7a46a"/><path d="M-22 -2h44M-22 3h44" stroke="#8f6c38" stroke-width="1.5"/><path d="M26 -2 q6 2 0 4" fill="#f0d8c8" stroke="#b08a80"/>`,
+  nakji:()=>{let a='';for(let i=0;i<8;i++){const x=-14+i*4;a+=`<path d="M${x} 4 q${(i%2?6:-6)} 10 ${(i-3.5)*4} 20" stroke="#b5574a" stroke-width="4" fill="none" stroke-linecap="round"/>`;}return a+`<ellipse cx="0" cy="-8" rx="15" ry="14" fill="#c9675a"/><circle cx="-5" cy="-6" r="3" fill="#fff"/><circle cx="5" cy="-6" r="3" fill="#fff"/><circle cx="-5" cy="-6" r="1.5" fill="#111"/><circle cx="5" cy="-6" r="1.5" fill="#111"/>`;}
+};
+const svgArt=(k,cls='')=>`<svg viewBox="-32 -32 64 64" class="${cls}" aria-hidden="true">${ART[k]()}</svg>`;
+
+/* ---------- 자료 ---------- */
+const SPOTS=[
+  {id:'ganghwa',name:'강화 갯벌',x:96,y:74,t:'인천 강화도 남쪽 바닷가에 넓게 펼쳐진 갯벌이에요. 겨울에는 저어새 같은 귀한 새들이 찾아와요.'},
+  {id:'garorim',name:'가로림만 갯벌',x:74,y:142,t:'충청남도 서산과 태안 사이 바다가 쏙 들어온 곳에 있어요. 물범이 쉬어 가는 곳이기도 해요.'},
+  {id:'seocheon',name:'서천 갯벌',x:86,y:196,t:'충청남도 서천에 있어요. 우리나라 갯벌 몇 곳과 함께 세계자연유산으로 정해졌어요.'},
+  {id:'gochang',name:'고창 갯벌',x:84,y:250,t:'전라북도 고창에 있어요. 모래와 펄이 섞여 있어서 조개가 많이 살아요.'},
+  {id:'sinan',name:'신안 갯벌',x:60,y:300,t:'전라남도 신안의 섬들 사이에 있어요. 우리나라에서 갯벌이 가장 넓은 곳이에요.'},
+  {id:'suncheon',name:'순천만 갯벌',x:178,y:316,t:'전라남도 순천의 남해 바닷가에 있어요. 갈대밭이 넓고, 겨울에는 흑두루미가 찾아와요.'}
+];
+const BIOS=[
+  {k:'chilge',name:'칠게',where:'땅 위',tool:'lens',x:190,y:250,t:'갯벌 구멍 근처에서 집게발로 진흙을 집어 먹어요. 흙 속 작은 먹이를 먹으며 갯벌을 깨끗하게 해요.'},
+  {k:'nongge',name:'농게',where:'땅 위',tool:'lens',x:560,y:300,t:'수컷은 한쪽 집게발이 아주 크고 빨개요. 큰 집게발을 흔들어 다른 게에게 신호를 보내요.'},
+  {k:'jjang',name:'짱뚱어',where:'땅 위',tool:'lens',x:370,y:205,t:'물고기인데 가슴지느러미로 갯벌 위를 기어 다니고 펄쩍 뛰어올라요. 눈이 머리 위에 툭 튀어나와 있어요.'},
+  {k:'gogung',name:'갯고둥',where:'땅 위',tool:'lens',x:690,y:395,t:'갯벌 위를 천천히 기어 다니며 흙 위의 먹이를 먹어요. 단단한 껍데기가 몸을 지켜 줘요.'},
+  {k:'worm',name:'갯지렁이',where:'땅속',tool:'shovel',x:120,y:380,t:'갯벌 속에 구멍을 파고 살아요. 흙을 먹고 뱉으며 갯벌에 숨구멍을 만들어 줘요.'},
+  {k:'clam',name:'바지락',where:'땅속',tool:'shovel',x:310,y:335,t:'모래가 섞인 갯벌 속에 살아요. 바닷물을 빨아들여 먹이를 걸러 먹어서 바닷물을 깨끗하게 해요.'},
+  {k:'razor',name:'맛조개',where:'땅속',tool:'shovel',x:470,y:410,t:'길쭉한 조개예요. 갯벌 깊은 구멍 속에 서서 숨어 살아요.'},
+  {k:'nakji',name:'낙지',where:'땅속',tool:'shovel',x:640,y:230,t:'갯벌 깊은 구멍 속에 숨어 살아요. 다리가 8개이고, 다리에 빨판이 있어요.'}
+];
+const DECKS=[
+  {id:'home',title:'생물의 집',color:'#fff3e4',art:'chilge',
+   cards:['갯벌에는 눈에 보이지 않을 만큼 작은 생물부터 게, 조개, 물고기까지 아주 많은 생물이 살아요.','칠게와 갯지렁이는 갯벌에 구멍을 파고 살아요. 먼 나라에서 날아온 철새들도 갯벌에서 먹이를 먹고 쉬어 가요.'],
+   q:'갯벌은 생물들에게 어떤 곳일까요?',opts:['살아가는 집이자 밥상','아무도 살지 않는 빈 땅','쓰레기를 모아 두는 곳'],a:0,role:'생물들이 살아가는 집이자 밥상이 되어 줘요.'},
+  {id:'clean',title:'바다를 깨끗하게',color:'#e6f5f6',art:'clam',
+   cards:['강물은 땅에서 나온 더러운 물질을 싣고 바다로 흘러와요.','갯벌의 흙은 더러운 물질을 걸러 내고, 바지락과 갯지렁이 같은 생물은 그것을 먹어서 없애요.'],
+   q:'갯벌은 어떻게 바다를 깨끗하게 하나요?',opts:['바닷물을 끓여서','흙과 생물이 더러운 물질을 걸러 주어서','물고기를 모두 잡아서'],a:1,role:'흙과 생물이 더러운 물질을 걸러 바다를 깨끗하게 해 줘요.'},
+  {id:'protect',title:'사람과 마을을 지켜요',color:'#eef6e8',art:'nakji',
+   cards:['태풍이나 큰비가 오면 갯벌이 넘치는 바닷물을 머금어서 바닷가 마을의 피해를 줄여 줘요.','사람들은 갯벌에서 조개와 낙지 같은 먹을거리를 얻고, 갯벌 체험으로 자연을 배우기도 해요.'],
+   q:'큰비가 올 때 갯벌은 무엇처럼 물을 머금어 줄까요?',opts:['단단한 돌','스펀지','유리컵'],a:1,role:'바닷물을 머금어 홍수 피해를 줄이고 사람에게 먹을거리를 줘요.'}
+];
+const VALUES=[
+  {k:'자립',d:'혼자 힘으로 끝까지 탐험했어요',c:'#2f8f98'},
+  {k:'성장',d:'몰랐던 것을 새로 알게 되었어요',c:'#5a8f3a'},
+  {k:'기여',d:'모둠 친구의 탐험을 도와주었어요',c:'#e2673b'},
+  {k:'책임',d:'갯벌을 지키는 마음을 다짐했어요',c:'#7a63b5'}
+];
+
+/* ---------- 상태 ---------- */
+const KEY='getbol-student-v1';
+function fresh(){return{name:'',num:'',grp:0,spots:[],quiz:false,bios:[],dug:{},decks:{},w:{},key:'',badge:'',log:[],doneAt:''};}
+let S=fresh();
+try{const s=JSON.parse(localStorage.getItem(KEY)||'null'); if(s&&s.name) S=Object.assign(fresh(),s);}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+const stamp=()=>{const d=new Date();return d.getHours()+':'+String(d.getMinutes()).padStart(2,'0');};
+function addLog(cat,text){S.log.push({t:stamp(),cat,text});save();}
+const done1=()=>S.spots.length>=6&&S.quiz, done2=()=>S.bios.length>=6, done3=()=>Object.keys(S.decks).length>=3, done4=()=>!!S.badge;
+
+/* ---------- 화면 이동 ---------- */
+const SCREENS=['home','map','e1','e2','e3','e4','badge','card','teacher'];
+function go(n){
+  try{speechSynthesis.cancel();}catch(e){}
+  SCREENS.forEach(s=>$('#s-'+s).hidden=(s!==n));
+  $('#topbar').hidden=(n==='home'||n==='teacher');
+  const idx={e1:0,e2:1,e3:2,e4:3}[n];
+  $$('#steps span').forEach((sp,i)=>{sp.className=([done1,done2,done3,()=>!!S.w.ok][i]()?'ok':'')+(i===idx?' on':'');});
+  ({map:renderMap,e1:renderE1,e2:renderE2,e3:renderE3,e4:renderE4,badge:renderBadges,card:renderCard,teacher:openTeacher})[n]?.();
+  window.scrollTo(0,0);
+}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-go]'); if(b) go(b.dataset.go);});
+
+/* ---------- 첫 화면 ---------- */
+$('#hero-art').innerHTML=`<rect x="0" y="118" width="520" height="32" fill="#9c8670"/>`+
+  [['chilge',70,110,1.1],['jjang',190,104,1.2],['nongge',320,108,1.2],['gogung',430,112,1],['worm',260,136,.8]].map(([k,x,y,s])=>`<g transform="translate(${x} ${y}) scale(${s})">${ART[k]()}</g>`).join('')+
+  [[40,128],[120,134],[230,126],[380,138],[480,130]].map(([x,y])=>`<ellipse cx="${x}" cy="${y}" rx="6" ry="3" fill="#4a3a2d"/>`).join('');
+$('#mini-crab').innerHTML=ART.nongge();
+$('#grp').innerHTML=[1,2,3,4,5].map(g=>`<button class="chip" data-g="${g}">${g}모둠</button>`).join('');
+$('#grp').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;S.grp=+b.dataset.g;$$('#grp .chip').forEach(c=>c.classList.toggle('on',c===b));});
+$('#in-name').value=S.name; $('#in-num').value=S.num; if(S.grp) $(`#grp [data-g="${S.grp}"]`).classList.add('on');
+$('#start').onclick=()=>{
+  const nm=$('#in-name').value.trim();
+  if(!nm||!S.grp){$('#join-msg').textContent='이름을 쓰고 모둠을 골라 주세요.';$('#join-msg').style.color='var(--crab)';return;}
+  if(S.name&&S.name!==nm){const g=S.grp;S=fresh();S.grp=g;}
+  S.name=nm; S.num=$('#in-num').value.trim(); save(); go('map');
+};
+$('#to-teacher').onclick=()=>go('teacher');
+
+/* ---------- 탐험 지도 ---------- */
+function renderMap(){
+  $('#hello').textContent=`${S.grp}모둠 ${S.name} 대원`;
+  const list=[
+    {n:'탐험 1',h:'갯벌은 어디에 있을까?',p:'지도에서 우리나라 갯벌 6곳을 찾아요.',go:'e1',open:true,d:done1()},
+    {n:'탐험 2',h:'갯벌 속 생물을 찾아라!',p:'돋보기와 삽으로 숨은 생물을 찾아요.',go:'e2',open:done1(),d:done2()},
+    {n:'탐험 3',h:'갯벌은 어떤 일을 할까?',p:'카드뉴스를 읽고 갯벌의 역할을 찾아요.',go:'e3',open:done2(),d:done3()},
+    {n:'탐험 4',h:'갯벌은 왜 소중할까?',p:'탐험 일지를 보고 갯벌의 가치를 써요.',go:'e4',open:done3(),d:!!S.w.ok}
+  ];
+  $('#mlist').innerHTML=list.map(m=>`<button class="mcard ${m.d?'done':''} ${m.open?'':'lock'}" ${m.open?`data-go="${m.go}"`:'disabled'}><span class="n">${m.n}</span><h3>${m.h}</h3><p>${m.p}</p><span class="st">${m.d?'탐험 완료':m.open?'출발!':'앞 탐험을 마치면 열려요'}</span></button>`).join('')+
+   (S.w.ok?`<button class="mcard" data-go="${S.badge?'card':'badge'}" style="border-color:var(--crab)"><span class="n">마지막</span><h3>${S.badge?'완료 카드 보기':'탐험 배지 받기'}</h3><p>우리 반 가치 배지와 완료 카드를 받아요.</p><span class="st" style="color:var(--crab)">가 보자!</span></button>`:'');
+}
+
+/* ---------- 탐험1 ---------- */
+const KOREA='M92 30 L150 22 L214 18 L236 44 L248 86 L258 130 L262 176 L256 222 L246 262 L232 292 L212 312 L188 324 L166 330 L146 336 L124 334 L104 326 L92 314 L82 296 L94 284 L76 270 L86 256 L72 240 L88 228 L76 214 L90 200 L72 186 L84 172 L66 158 L80 146 L64 132 L80 118 L70 104 L84 90 L76 74 L90 60 Z';
+const q1sel=new Set();
+function renderE1(){
+  const svg=$('#kmap');
+  svg.innerHTML=`<path d="${KOREA}" fill="#d9caa6" stroke="#8c7a5b" stroke-width="2"/>
+   <ellipse cx="98" cy="392" rx="26" ry="11" fill="#d9caa6" stroke="#8c7a5b" stroke-width="2"/>
+   ${[[48,322],[40,290],[56,345],[30,305],[124,352],[150,356]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="4" fill="#d9caa6" stroke="#8c7a5b"/>`).join('')}
+   <text x="22" y="230" font-family="Jua" font-size="20" fill="#2f8f98">서해</text>
+   <text x="276" y="160" font-family="Jua" font-size="20" fill="#2f8f98">동해</text>
+   <text x="190" y="372" font-family="Jua" font-size="20" fill="#2f8f98">남해</text>
+   <text x="160" y="410" font-family="Jua" font-size="13" fill="#6a5d51">제주도</text>`+
+   SPOTS.map(s=>`<g class="spot ${S.spots.includes(s.id)?'found':''}" data-id="${s.id}" tabindex="0" role="button" aria-label="${s.name}"><circle class="glow" cx="${s.x}" cy="${s.y}" r="13"/><circle class="core" cx="${s.x}" cy="${s.y}" r="8"/><circle cx="${s.x}" cy="${s.y}" r="22" fill="transparent"/></g>`).join('');
+  $('#c1').textContent=S.spots.length;
+  $('#q1').hidden=S.spots.length<6;
+  $('#q1opts').innerHTML=['서해안','남해안','동해안'].map(o=>`<button class="opt ${q1sel.has(o)?'on':''}" data-o="${o}">${o}</button>`).join('');
+  if(S.quiz){$('#q1why').hidden=false;$('#q1fb').className='feedback good';$('#q1fb').textContent='정답이에요! 서해안과 남해안에 갯벌이 많아요.';$$('#q1opts .opt').forEach(b=>{if(b.dataset.o!=='동해안')b.classList.add('right');});}
+  $('#e1next').hidden=!done1();
+}
+function pickSpot(id){
+  const s=SPOTS.find(x=>x.id===id);
+  $('#spot-info').innerHTML=`<h3>${s.name}</h3><p>${s.t}</p>`;
+  speak(s.name+'. '+s.t);
+  if(!S.spots.includes(id)){S.spots.push(id);addLog('place',`${s.name}을 찾았어요.`);}
+  save(); renderE1();
+}
+$('#kmap').addEventListener('click',e=>{const g=e.target.closest('.spot');if(g)pickSpot(g.dataset.id);});
+$('#kmap').addEventListener('keydown',e=>{const g=e.target.closest('.spot');if(g&&(e.key==='Enter'||e.key===' ')){e.preventDefault();pickSpot(g.dataset.id);}});
+$('#q1opts').addEventListener('click',e=>{const b=e.target.closest('.opt');if(!b||S.quiz)return;const o=b.dataset.o;q1sel.has(o)?q1sel.delete(o):q1sel.add(o);b.classList.toggle('on');});
+$('#q1check').onclick=()=>{
+  if(S.quiz)return;
+  const ok=q1sel.has('서해안')&&q1sel.has('남해안')&&!q1sel.has('동해안');
+  if(ok){S.quiz=true;addLog('place','갯벌은 서해안과 남해안에 많아요.');save();renderE1();speak('정답이에요! 서해안과 남해안에 갯벌이 많아요.');}
+  else{$('#q1fb').className='feedback try';$('#q1fb').textContent=q1sel.has('동해안')?'동해안에서는 갯벌을 거의 찾지 못했지요? 지도를 다시 살펴볼까요?':'갯벌을 찾은 바닷가가 한 곳 더 있어요. 지도를 다시 살펴볼까요?';}
+};
+$('#e1next').onclick=()=>go('e2');
+
+/* ---------- 탐험2 ---------- */
+let tool='lens', tide=100;
+const MUD_TOP=150;
+function renderE2(){
+  tide=+$('#tide').value;
+  const waterH=MUD_TOP+ (460-MUD_TOP)*(tide/100);
+  const svg=$('#scene');
+  let mud=''; const r=(n=>()=>{n=(n*16807)%2147483647;return n/2147483647;})(7);
+  for(let i=0;i<70;i++){mud+=`<ellipse cx="${r()*800}" cy="${MUD_TOP+20+r()*290}" rx="${8+r()*26}" ry="${2+r()*4}" fill="#5f4d3c" opacity="${.15+r()*.2}"/>`;}
+  const holes=BIOS.filter(b=>b.tool==='shovel').map(b=>{
+    const dug=S.dug[b.k]||0, got=S.bios.includes(b.k);
+    if(got) return `<g transform="translate(${b.x} ${b.y}) scale(1.2)">${ART[b.k]()}</g>`;
+    return `<g class="hole" data-k="${b.k}">${dug?`<ellipse cx="${b.x+26}" cy="${b.y+6}" rx="20" ry="9" fill="#8a7256"/>`:''}<ellipse cx="${b.x}" cy="${b.y}" rx="${dug?24:13}" ry="${dug?11:6}" fill="#2a1f17"/><circle cx="${b.x-18}" cy="${b.y-8}" r="2.5" fill="#cfe9ec" opacity=".8"/><circle cx="${b.x+16}" cy="${b.y-10}" r="2" fill="#cfe9ec" opacity=".8"/><rect x="${b.x-40}" y="${b.y-30}" width="80" height="60" fill="transparent"/></g>`;
+  }).join('');
+  const crits=BIOS.filter(b=>b.tool==='lens').map(b=>{const got=S.bios.includes(b.k);return `<g class="crit ${got?'found':''}" data-k="${b.k}" transform="translate(${b.x} ${b.y}) scale(1.15)" opacity="${got?1:.13}"><rect x="-34" y="-30" width="68" height="60" fill="transparent"/>${ART[b.k]()}</g>`;}).join('');
+  svg.innerHTML=`<rect width="800" height="${MUD_TOP}" fill="#e6f5f6"/><circle cx="700" cy="50" r="28" fill="#f4c443"/>
+    <path d="M0 ${MUD_TOP} Q200 ${MUD_TOP-14} 400 ${MUD_TOP-4} T800 ${MUD_TOP-8} V460 H0z" fill="#8f7860"/>
+    ${mud}
+    <path d="M0 ${MUD_TOP+30} Q120 ${MUD_TOP+60} 260 ${MUD_TOP+40} T520 ${MUD_TOP+70} T800 ${MUD_TOP+50}" stroke="#a9c9cc" stroke-width="10" fill="none" opacity=".5"/>
+    ${holes}${crits}
+    <rect x="0" y="${MUD_TOP-10}" width="800" height="${Math.max(0,waterH-MUD_TOP+10)}" fill="#2f8f98" opacity=".82" style="transition:height .3s"/>
+    ${tide>20?`<text x="400" y="${Math.min(waterH-20,300)}" text-anchor="middle" font-family="Jua" font-size="28" fill="#fff">지금은 밀물이에요. 바닷물이 빠지길 기다려요!</text>`:''}
+    <circle id="lensc" cx="-200" cy="-200" r="70" fill="rgba(255,255,255,.12)" stroke="#fff" stroke-width="5" pointer-events="none"/>`;
+  $('#c2').textContent=S.bios.length;
+  $('#dex').innerHTML=BIOS.map(b=>{const got=S.bios.includes(b.k);return `<div class="dexc ${got?'got':''}">${got?svgArt(b.k):'<svg viewBox="0 0 64 64"><text x="32" y="44" text-anchor="middle" font-family="Jua" font-size="36" fill="#b59f86">?</text></svg>'}<div class="nm">${got?b.name:'???'}</div><div class="where">${got?b.where:'숨어 있어요'}</div></div>`;}).join('');
+  const b=$('#e2next'); b.disabled=!done2(); b.textContent=done2()?'다음 탐험: 갯벌의 역할':`6종을 찾으면 다음 탐험이 열려요`;
+}
+let toastT;
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2300);}
+$('#tide').addEventListener('input',()=>{const was=tide;renderE2();if(was>20&&tide<=20){toast('썰물이 되었어요! 갯벌이 드러났어요.');}});
+$$('.tool').forEach(b=>b.onclick=()=>{tool=b.dataset.tool;$$('.tool').forEach(x=>x.classList.toggle('on',x===b));toast(tool==='lens'?'돋보기: 땅 위의 작은 생물을 찾아요.':'삽: 구멍이 있는 곳을 두 번 파 보세요.');});
+function svgPt(e){const s=$('#scene');const p=s.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(s.getScreenCTM().inverse());}
+$('#scene').addEventListener('pointermove',e=>{
+  if(tool!=='lens'||tide>20)return;
+  const p=svgPt(e);const c=$('#lensc');if(c){c.setAttribute('cx',p.x);c.setAttribute('cy',p.y);}
+  $$('#scene .crit:not(.found)').forEach(g=>{const b=BIOS.find(x=>x.k===g.dataset.k);const d=Math.hypot(b.x-p.x,b.y-p.y);g.setAttribute('opacity',d<80?.85:.13);});
+});
+$('#scene').addEventListener('click',e=>{
+  if(tide>20){toast('바닷물이 덮여 있어요. 막대를 썰물 쪽으로 밀어 보세요.');return;}
+  const c=e.target.closest('.crit'), h=e.target.closest('.hole');
+  if(c&&!c.classList.contains('found')){
+    if(tool!=='lens'){toast('땅 위에 있는 생물이에요. 돋보기를 써 볼까요?');return;}
+    findBio(c.dataset.k);
+  }else if(h){
+    if(tool!=='shovel'){toast('구멍 속에 무언가 숨었나 봐요. 삽으로 파 볼까요?');return;}
+    const k=h.dataset.k; S.dug[k]=(S.dug[k]||0)+1; save();
+    if(S.dug[k]>=2) findBio(k); else {toast('흙이 파였어요. 한 번 더 파 보세요!');renderE2();}
+  }else if(!c){toast(tool==='lens'?'돋보기를 움직여 희미하게 보이는 생물을 찾아요.':'구멍이 있는 곳을 파 보세요.');}
+});
+function findBio(k){
+  const b=BIOS.find(x=>x.k===k);
+  $('#toast').classList.remove('show');
+  if(!S.bios.includes(k)){S.bios.push(k);addLog('bio',`${b.where}에서 ${b.name}을 찾았어요.`);save();}
+  renderE2();
+  $('#mbox').innerHTML=`${svgArt(k,'big')}<h3>${b.name}</h3><span class="where">${b.where}에서 찾았어요</span><p>${b.t}</p><div class="acts"><button class="say" data-say="${b.name}. ${b.t}" aria-label="읽어 주기">${SPK}</button><button class="btn sea" id="mclose">도감에 넣기</button></div>`;
+  $('#modal').hidden=false; $('#mclose').focus(); $('#mclose').onclick=closeModal;
+  speak(b.name+'을 찾았어요! '+b.t);
+}
+function closeModal(){$('#modal').hidden=true;try{speechSynthesis.cancel();}catch(e){} if(S.bios.length===6) toast('6종을 찾았어요! 다음 탐험이 열렸어요. 더 찾아봐도 좋아요.');}
+$('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal();});
+$('#e2next').onclick=()=>go('e3');
+
+/* ---------- 탐험3 ---------- */
+const page={};
+function renderE3(){
+  $('#decks').innerHTML=DECKS.map(d=>{
+    const n=page[d.id]??(S.decks[d.id]?2:0), total=3, ans=S.decks[d.id];
+    let body;
+    if(n<2) body=`<div class="slide" style="background:${d.color}"><span class="pg">${n+1} / ${total}</span><div class="pic">${svgArt(d.art)}</div><p>${d.cards[n]}</p></div>`;
+    else body=`<div class="slide" style="background:${d.color}"><span class="pg">3 / ${total}</span><p class="q">${d.q}</p><div class="qopts">${d.opts.map((o,i)=>`<button class="opt ${ans!=null&&i===d.a?'right':''}" data-d="${d.id}" data-i="${i}">${o}</button>`).join('')}</div><div class="feedback ${ans!=null?'good':''}" id="fb-${d.id}">${ans!=null?'맞아요! '+d.role:''}</div></div>`;
+    const say=n<2?d.cards[n]:d.q+' '+d.opts.map((o,i)=>(i+1)+'번, '+o).join('. ');
+    return `<div class="deck ${ans!=null?'done':''}"><div class="dh"><h3>${d.title}</h3><button class="say" data-say="${say}" aria-label="읽어 주기">${SPK}</button></div>${body}<div class="dnav"><button class="btn ghost" data-prev="${d.id}" ${n===0?'disabled':''}>이전</button><button class="btn sea" data-next="${d.id}" ${n===2?'disabled':''}>다음 장</button></div></div>`;
+  }).join('');
+  const got=DECKS.filter(d=>S.decks[d.id]!=null);
+  $('#roles').innerHTML=got.length?got.map(d=>`<li>${d.role}</li>`).join(''):'<li class="small">카드뉴스 질문에 답하면 여기에 적혀요.</li>';
+  $('#e3next').disabled=!done3();
+}
+$('#decks').addEventListener('click',e=>{
+  const nx=e.target.closest('[data-next]'),pv=e.target.closest('[data-prev]'),op=e.target.closest('.opt[data-d]');
+  if(nx){const id=nx.dataset.next;page[id]=Math.min(2,(page[id]??0)+1);renderE3();}
+  else if(pv){const id=pv.dataset.prev;page[id]=Math.max(0,(page[id]??(S.decks[id]!=null?2:0))-1);renderE3();}
+  else if(op){
+    const d=DECKS.find(x=>x.id===op.dataset.d), i=+op.dataset.i;
+    if(S.decks[d.id]!=null)return;
+    if(i===d.a){S.decks[d.id]=i;addLog('role',d.role);save();page[d.id]=2;renderE3();speak('맞아요! '+d.role);}
+    else{op.classList.add('wrong');const fb=$('#fb-'+d.id);fb.className='feedback try';fb.textContent='앞 장의 카드를 다시 떠올려 볼까요? 이전 버튼을 눌러도 좋아요.';}
+  }
+});
+$('#e3next').onclick=()=>go('e4');
+
+/* ---------- 탐험4 ---------- */
+function renderE4(){
+  $('#log').innerHTML=S.log.map(l=>`<li><span class="tm">${l.t}</span><span><span class="cat ${l.cat}">${{place:'장소',bio:'생물',role:'역할'}[l.cat]}</span>${l.text}</span></li>`).join('')||'<li>아직 기록이 없어요.</li>';
+  ['w1','w2','w3'].forEach(id=>{$('#'+id).value=S.w[id]||'';});
+  $$('#keys .key').forEach(k=>k.classList.toggle('on',k.dataset.k===S.key));
+  const clues=[...S.bios.map(k=>BIOS.find(b=>b.k===k)).map(b=>`${b.name}이 갯벌 ${b.where==='땅속'?'속에 숨어':'위에서'} 살고 있었기`),...DECKS.filter(d=>S.decks[d.id]!=null).map(d=>({home:'철새가 갯벌에서 먹이를 먹고 쉬어 가기',clean:'갯벌 흙과 생물이 더러운 물질을 걸러 주기',protect:'갯벌이 바닷물을 스펀지처럼 머금어 주기'}[d.id]))];
+  $('#clues').innerHTML='<span class="small" style="width:100%">내가 찾은 단서를 누르면 아래 칸에 들어가요</span>'+clues.slice(0,8).map(c=>`<button class="clue">${c}</button>`).join('');
+}
+$('#keys').addEventListener('click',e=>{const k=e.target.closest('.key');if(!k)return;S.key=k.dataset.k;save();$$('#keys .key').forEach(x=>x.classList.toggle('on',x===k));
+  $('#w1').placeholder={bio:'생물들이 살아가는 집이 되어 주는',people:'사람들에게 먹을거리를 주는',nature:'바다를 깨끗하게 지켜 주는'}[S.key];});
+$('#clues').addEventListener('click',e=>{const c=e.target.closest('.clue');if(!c)return;$('#w2').value=c.textContent;S.w.w2=c.textContent;save();});
+['w1','w2','w3'].forEach(id=>$('#'+id).addEventListener('input',e=>{S.w[id]=e.target.value;save();}));
+$('#ex-btn').onclick=()=>{$('#ex').hidden=!$('#ex').hidden;};
+$('#e4next').onclick=()=>{
+  if(!(S.w.w1||'').trim()||!(S.w.w2||'').trim()){$('#e4fb').textContent='1번과 2번 칸을 채워 주세요. 단서 단추를 눌러도 좋아요.';return;}
+  $('#e4fb').textContent=''; if(!S.w.ok){S.w.ok=true;save();} go('badge');
+};
+
+/* ---------- 배지 ---------- */
+function medal(v,c){return `<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M30 6 L44 40 L56 40 L70 6 Z" fill="${c}" opacity=".6"/><circle cx="50" cy="60" r="34" fill="${c}"/><circle cx="50" cy="60" r="27" fill="none" stroke="#fff" stroke-width="3" stroke-dasharray="4 4"/><text x="50" y="70" text-anchor="middle" font-family="Jua" font-size="26" fill="#fff">${v}</text></svg>`;}
+function renderBadges(){
+  $('#badges').innerHTML=VALUES.map(v=>`<button class="badge ${S.badge===v.k?'on':''}" data-v="${v.k}">${medal(v.k,v.c)}<b style="color:${v.c}">${v.k}</b><span>${v.d}</span></button>`).join('');
+  $('#badge-next').disabled=!S.badge;
+}
+$('#badges').addEventListener('click',e=>{const b=e.target.closest('.badge');if(!b)return;S.badge=b.dataset.v;save();renderBadges();const v=VALUES.find(x=>x.k===S.badge);speak(v.k+'. '+v.d);});
+$('#badge-next').onclick=()=>{if(!S.doneAt){const d=new Date();S.doneAt=`${d.getMonth()+1}월 ${d.getDate()}일 ${stamp()}`;save();}go('card');};
+
+/* ---------- 완료 카드 ---------- */
+function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function renderCard(){
+  const v=VALUES.find(x=>x.k===S.badge)||VALUES[0];
+  $('#card').innerHTML=`<div class="band"><div class="num">${S.num?S.num+'번 · ':''}${S.grp}모둠</div><h2>${esc(S.name)} 대원 탐험 완료</h2>${medal(v.k,v.c)}</div>
+   <div class="body">
+    <div class="stats"><div class="stat"><b>${S.spots.length}/6</b><span>찾은 갯벌</span></div><div class="stat"><b>${S.bios.length}/8</b><span>찾은 생물</span></div><div class="stat"><b>${Object.keys(S.decks).length}/3</b><span>갯벌의 역할</span></div></div>
+    <blockquote>갯벌은 ${esc(S.w.w1)} 가치가 있어요. 왜냐하면 ${esc(S.w.w2)} 때문이에요.${S.w.w3?'<br>'+esc(S.w.w3):''}</blockquote>
+    <div class="small">오늘 실천한 가치: <b style="color:${v.c}">${v.k}</b> · ${v.d}</div>
+    <div class="foot"><span>버들 갯벌 탐험대 · 3학년 2반 임혜란샘</span><span>${S.doneAt}</span></div>
+   </div>`;
+}
+$('#restart').onclick=()=>{
+  const w=$('#restart').parentElement;
+  if(!w.querySelector('.really')){const s=document.createElement('span');s.className='confirm really';s.innerHTML='<span class="small">기록이 모두 지워져요.</span><button class="btn crab" style="font-size:17px">지우고 처음으로</button>';w.appendChild(s);
+    s.querySelector('button').onclick=()=>{S=fresh();save();$('#in-name').value='';$('#in-num').value='';$$('#grp .chip').forEach(c=>c.classList.remove('on'));s.remove();go('home');};}
+};
+
+/* ---------- 선생님 화면 ---------- */
+const TKEY='getbol-teacher-v1';
+const blankBoard=()=>({scores:[0,0,0,0,0],roster:Array.from({length:22},(_,i)=>({name:(i+1)+'번',st:0}))});
+let B=blankBoard(), doc=null, canWrite=true, writing=false, pending=false;
+try{const t=JSON.parse(localStorage.getItem(TKEY)||'null');if(t&&t.roster)B=t;}catch(e){}
+function note(t){$('#store-note').textContent=t;}
+async function persist(){
+  try{localStorage.setItem(TKEY,JSON.stringify(B));}catch(e){}
+  if(!doc||!canWrite)return;
+  if(writing){pending=true;return;}
+  writing=true;
+  try{await doc.set({scores:B.scores,roster:B.roster});note('선생님 계정에 저장되었어요. 다른 기기에서 열어도 그대로 보여요.');}
+  catch(e){note('지금은 이 기기에만 저장돼요. 인터넷 연결을 확인해 주세요.');}
+  writing=false; if(pending){pending=false;persist();}
+}
+let dbTried=false;
+async function connectDb(){
+  if(dbTried)return; dbTried=true;
+  if(!window.claude||!window.claude.use){note('이 기기에만 저장돼요.');return;}
+  const timer=setTimeout(()=>note('이 기기에만 저장돼요.'),10000);
+  try{
+    const db=await window.claude.use('db');
+    if(!db){clearTimeout(timer);note('이 기기에만 저장돼요. 선생님 계정으로 로그인한 화면에서 열면 계정에 저장돼요.');return;}
+    const user=await window.claude.use('user');
+    canWrite=user?(user.canEdit()):false;
+    doc=db.doc('class/board');
+    doc.onSnapshot(s=>{clearTimeout(timer);
+      if(s.exists){const d=s.data();if(d&&Array.isArray(d.roster)){B={scores:d.scores||[0,0,0,0,0],roster:d.roster};try{localStorage.setItem(TKEY,JSON.stringify(B));}catch(e){}}}
+      else if(canWrite){persist();}
+      note(canWrite?'선생님 계정에 저장되었어요. 다른 기기에서 열어도 그대로 보여요.':'보기 전용이에요. 선생님 계정에서만 바꿀 수 있어요.');
+      renderTeacher();
+    },()=>{clearTimeout(timer);note('지금은 이 기기에만 저장돼요.');});
+  }catch(e){clearTimeout(timer);note('이 기기에만 저장돼요.');}
+}
+function openTeacher(){renderTeacher();connectDb();}
+function renderTeacher(){
+  const max=Math.max(...B.scores);
+  $('#score').innerHTML=B.scores.map((p,i)=>`<div class="team t${i+1} ${p>0&&p===max?'lead':''}"><h3>${i+1}모둠</h3><div class="pts">${p}</div><div class="bar"><i style="width:${Math.min(100,p*10)}%"></i></div><div class="tb"><button data-sc="${i}" data-d="-1" aria-label="${i+1}모둠 1점 빼기">−</button><button data-sc="${i}" data-d="1" aria-label="${i+1}모둠 1점 더하기">+</button></div></div>`).join('');
+  const lab=['시작 전','탐험 중','완료'];
+  $('#roster').innerHTML=B.roster.map((s,i)=>`<button class="stu ${['','go','done'][s.st]}" data-i="${i}"><span class="no">${i+1}번</span><span class="nm">${esc(s.name)}</span><span class="s">${lab[s.st]}</span></button>`).join('');
+  const c=[0,0,0];B.roster.forEach(s=>c[s.st]++);
+  $('#p-wait').textContent='시작 전 '+c[0];$('#p-go').textContent='탐험 중 '+c[1];$('#p-done').textContent='완료 '+c[2];
+}
+$('#score').addEventListener('click',e=>{const b=e.target.closest('[data-sc]');if(!b||!canWrite)return;const i=+b.dataset.sc;B.scores[i]=Math.max(0,B.scores[i]+ +b.dataset.d);renderTeacher();persist();});
+$('#roster').addEventListener('click',e=>{const b=e.target.closest('.stu');if(!b||!canWrite)return;const s=B.roster[+b.dataset.i];s.st=(s.st+1)%3;renderTeacher();persist();});
+$('#edit-names').onclick=()=>{const bx=$('#names-box');bx.hidden=!bx.hidden;$('#names').value=B.roster.map(s=>s.name).join('\n');};
+$('#save-names').onclick=()=>{const ls=$('#names').value.split('\n').map(x=>x.trim());B.roster=B.roster.map((s,i)=>({name:ls[i]||(i+1)+'번',st:s.st}));$('#names-box').hidden=true;renderTeacher();persist();};
+$('#reset').onclick=()=>{
+  const w=$('#reset-wrap'); if(w.querySelector('.really'))return;
+  const s=document.createElement('span');s.className='confirm really';s.innerHTML='<span class="small">점수와 현황을 처음으로 돌려요. 이름은 그대로예요.</span><button class="btn crab" style="font-size:17px">처음으로 돌리기</button><button class="btn ghost" style="font-size:17px">취소</button>';
+  w.appendChild(s);const [ok,no]=s.querySelectorAll('button');
+  ok.onclick=()=>{B.scores=[0,0,0,0,0];B.roster.forEach(r=>r.st=0);s.remove();renderTeacher();persist();};no.onclick=()=>s.remove();
+};
+$('#t-home').onclick=()=>go('home');
+
+fillSay();
+go('home');
+</script>
+</body></html>
