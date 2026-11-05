@@ -131,7 +131,10 @@ h1,h2,h3{font-family:var(--f-disp);font-weight:400;text-wrap:balance;margin:0;li
 .quiz h3{font-size:22px;margin-bottom:10px}
 .opts{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
 .opt{border:2px solid var(--line);background:var(--paper);border-radius:14px;padding:10px 18px;font-family:var(--f-disp);font-size:20px}
-.opt.on{border-color:var(--sea);background:var(--sea-lt)}
+.opt{transition:transform .08s}.opt:active{transform:scale(.95)}
+.opt.on{border-color:var(--sea);background:var(--sea);color:#fff}
+.opt.on::before{content:"✓ "}
+.opt.right{color:var(--ink)}
 .opt.right{border-color:var(--good);background:#e2f3e7}
 .opt.wrong{border-color:var(--crab);background:#fbe5dc}
 .feedback{font-size:17px;margin:10px 0;min-height:1.6em}
@@ -208,7 +211,7 @@ h1,h2,h3{font-family:var(--f-disp);font-weight:400;text-wrap:balance;margin:0;li
 @media (max-width:520px){.keys{grid-template-columns:1fr}}
 .key{border:2px solid var(--line);border-radius:14px;padding:10px;background:var(--paper);text-align:left;font-size:15px}
 .key b{display:block;font-family:var(--f-disp);font-weight:400;font-size:18px;color:var(--mud-dk)}
-.key.on{border-color:var(--sea);background:var(--sea-lt)}
+.key.on{border-color:var(--sea);background:var(--sea);color:#fff}.key.on b{color:#fff}
 .frame{display:grid;gap:10px;margin-top:8px}
 .frame label{font-family:var(--f-disp);font-size:18px;color:var(--mud-dk)}
 .frame .line{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
@@ -322,7 +325,7 @@ textarea#names{width:100%;min-height:150px;font:inherit;font-size:17px;border:2p
       <div class="counter">찾은 갯벌 <b id="c1">0</b> / 6</div>
       <div class="info" id="spot-info"><h3>어디부터 찾아볼까요?</h3><p>바닷가를 따라 반짝이는 노란 빛을 눌러 보세요. 지도를 돌려 보면 숨어 있던 빛도 보여요.</p></div>
       <div class="quiz" id="q1" hidden>
-        <h3>퀴즈! 갯벌이 많은 해안을 모두 골라요</h3>
+        <h3>퀴즈! 갯벌이 많은 해안을 모두 골라요</h3><p class="small" style="margin:-4px 0 10px">맞는 해안을 모두 누른 다음 정답 확인을 눌러요. 여러 개를 골라도 돼요.</p>
         <div class="opts" id="q1opts"></div>
         <button class="btn sea" id="q1check">정답 확인</button>
         <div class="feedback" id="q1fb"></div>
@@ -848,7 +851,7 @@ function pickSpot(id){
   if(!S.spots.includes(id)){S.spots.push(id);addLog('place',`${s.coast}에서 ${s.name}을 찾았어요. ${VISIT[s.v][0]}.`,'v:'+s.v);if(S.spots.length===6)setTimeout(()=>speak('6곳을 모두 찾았어요! 이제 퀴즈를 풀어요.'),2500);}
   save();MAP&&MAP.refresh();MAP&&MAP.focus(id);renderE1();
 }
-$('#q1opts').addEventListener('click',e=>{const b=e.target.closest('.opt');if(!b||S.quiz)return;const o=b.dataset.o;q1sel.has(o)?q1sel.delete(o):q1sel.add(o);b.classList.toggle('on');$('#q1fb').textContent='';});
+$('#q1opts').addEventListener('click',e=>{const b=e.target.closest('.opt');if(!b||S.quiz)return;const o=b.dataset.o;q1sel.has(o)?q1sel.delete(o):q1sel.add(o);b.classList.toggle('on',q1sel.has(o));$('#q1fb').textContent='';$('#q1check').classList.toggle('ready',q1sel.size>0);});
 $('#q1check').onclick=()=>{
   if(!q1sel.size){$('#q1fb').className='feedback try';$('#q1fb').textContent='먼저 해안을 눌러서 골라요. 여러 개를 골라도 돼요.';return;}
   const ok=q1sel.has('서해안')&&q1sel.has('남해안')&&!q1sel.has('동해안');
