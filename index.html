@@ -1046,7 +1046,7 @@ function initDig(){
   let swing=null,shake=0;
   function towardCam(x,z){const c=DIG.camera.position;const v=new T.Vector3(c.x-x,0,c.z-z);if(v.lengthSq()<1e-4)v.set(0,0,1);return v.normalize();}
   function swingHomi(x,z,opts={}){const dir=towardCam(x,z);homi.visible=true;swing={t:0,x,z,dir,strokes:opts.strokes||2,onStrike:opts.onStrike,onEnd:opts.onEnd,hit:0};}
-  const STROKE=.62;
+  const STROKE=.42;
   /* 상태 되살리기 */
   function restore(){
     Object.entries(S.dug).forEach(([id,n])=>{const b=BURIED.find(x=>x.id===id);if(!b)return;digAt(b.x,b.z,.75,n>=2?.45:.22);const dir=new T.Vector3(0,0,1);growPile(id,b.x,b.z,dir,n*2);const p=piles[id];p.scale.copy(p.userData.goal);if(n>=2){clueObjs[id].visible=false;seep(id,b.x,b.z);seeps[id].t=1;const c=crit[id];c.obj.visible=true;c.obj.position.y=dH(b.x,b.z)-.3;c.rise=1;}});
@@ -1066,33 +1066,30 @@ function initDig(){
     const r=canvas.getBoundingClientRect();const px=e.clientX-r.left,py=e.clientY-r.top;
     /* 땅 위 생물 */
     let best=null,bd=1e9;SURF.forEach(s=>{const c=crit[s.id];if(S.bios.includes(s.id))return;const q=screenOf(c);const d=Math.hypot(q.x-px,q.y-py);if(d<bd){bd=d;best=s.id;}});
-    let bestB=null,bdB=1e9;BURIED.forEach(b=>{if((S.dug[b.id]||0)>=2)return;const q=toScreen(new T.Vector3(b.x,dH(b.x,b.z),b.z),DIG);const d=Math.hypot(q.x-px,q.y-py);if(d<bdB){bdB=d;bestB=b.id;}});
+    let bestB=null,bdB=1e9;RC.setFromCamera(ndc(e,canvas),DIG.camera);const hitP=(RC.intersectObject(mud)[0]||{}).point;BURIED.forEach(b=>{if((S.dug[b.id]||0)>=2)return;const q=toScreen(new T.Vector3(b.x,dH(b.x,b.z),b.z),DIG);let d=Math.hypot(q.x-px,q.y-py);if(hitP){const w=Math.hypot(hitP.x-b.x,hitP.z-b.z);if(w<1.0)d=Math.min(d,w*60);}if(d<bdB){bdB=d;bestB=b.id;}});
     if(tool==='look'){if(bd<70||bdB<70)toast($('#digToast'),bd<bdB?'무언가 움직였어요! 돋보기를 골라서 찾아볼까요?':'흔적이 있어요! 호미를 골라서 파 볼까요?');else toast($('#digToast'),'아래 돋보기나 호미를 골라서 탐험해요. 끌면 갯벌을 돌려 볼 수 있어요.');return;}
     if(tool==='lens'){
       if(bd<80){findSurface(best);return;}
       if(bdB<70){toast($('#digToast'),`${josa(BIOS[bestB].clue,'이','가')} 보여요! 땅속에 숨었나 봐요. 호미로 파 볼까요?`);return;}
       toast($('#digToast'),'돋보기를 천천히 움직여 보세요. 보호색으로 숨은 생물이 또렷하게 보여요.');return;}
     if(tool==='homi'){
-      if(bdB<80){digBuried(bestB);return;}
+      if(bdB<95){digBuried(bestB);return;}
       if(bd<80){toast($('#digToast'),'땅 위에 있는 생물이에요. 돋보기로 찾아볼까요?');return;}
-      RC.setFromCamera(ndc(e,canvas),DIG.camera);const h=RC.intersectObject(mud)[0];if(h&&!swing){const hx=h.point.x,hz=h.point.z;swingHomi(hx,hz,{strokes:1,onStrike:(dir)=>{thud(false);throwClods(hx,dH(hx,hz),hz,dir,5);digAt(hx,hz,.3,.06);}});}
+      RC.setFromCamera(ndc(e,canvas),DIG.camera);const h=RC.intersectObject(mud)[0];if(h){if(swing)finishSwing();const hx=h.point.x,hz=h.point.z;swingHomi(hx,hz,{strokes:1,onStrike:(dir)=>{thud(false);throwClods(hx,dH(hx,hz),hz,dir,5);digAt(hx,hz,.3,.06);}});}
       toast($('#digToast'),'여기에는 흔적이 없어요. 구멍이나 흙더미 같은 흔적을 찾아 파 봐요.');}
   }
   function findSurface(id){const c=crit[id];c.reveal=1;c.happy=1.2;if(!S.bios.includes(id)){S.bios.push(id);addLog('bio',`${BIOS[id].where}에서 ${josa(BIOS[id].name,'을','를')} 찾았어요. ${BIOS[id].log}`,'b:'+id);save();}renderE2();setTimeout(()=>encounter(id),700);}
+  function finishSwing(){if(!swing)return;const sw=swing;if(sw.hit<sw.strokes&&sw.onStrike){sw.hit=sw.strokes;sw.onStrike(sw.dir);}swing=null;homi.visible=false;sw.onEnd&&sw.onEnd();}
   function digBuried(id){
-    if(swing)return;
-    const b=BURIED.find(x=>x.id===id);const n=(S.dug[id]||0)+1;S.dug[id]=n;save();
-    ctl.fly([b.x,0,b.z+.4],Math.min(ctl.s.dist,7.2),undefined,Math.min(ctl.s.pol,1.0));
-    let k=0;
-    swingHomi(b.x,b.z,{strokes:2,onStrike:(dir)=>{k++;const step=(n-1)*2+k;thud(step>=3);shake=.18;
-        digAt(b.x,b.z,.78,step>=4?.46:step>=3?.36:step>=2?.24:.13);throwClods(b.x,dH(b.x,b.z),b.z,dir,9+k*3);growPile(id,b.x,b.z,dir,step);
-        if(step===2)clueObjs[id].visible=false;
-        seep(id,b.x,b.z);if(step>=3)splash(b.x,dH(b.x,b.z)-.15,b.z);},
-      onEnd:()=>{
-        if(n>=2){const c=crit[id];c.obj.visible=true;c.obj.position.y=-.7;c.rise=0.001;
+    if(swing)finishSwing();
+    const b=BURIED.find(x=>x.id===id);if((S.dug[id]||0)>=2)return;const n=(S.dug[id]||0)+1;S.dug[id]=n;save();
+    swingHomi(b.x,b.z,{strokes:1,onStrike:(dir)=>{thud(n>=2);shake=.2;
+        digAt(b.x,b.z,.8,n>=2?.5:.3);throwClods(b.x,dH(b.x,b.z),b.z,dir,n>=2?20:14);growPile(id,b.x,b.z,dir,n*2);
+        clueObjs[id].visible=false;seep(id,b.x,b.z);if(n>=2){splash(b.x,dH(b.x,b.z)-.15,b.z);
+          const c=crit[id];c.obj.visible=true;c.obj.position.y=-.7;c.rise=0.001;
           if(!S.bios.includes(id)){S.bios.push(id);addLog('bio',`${BIOS[id].clue} 흔적을 호미로 파서 ${josa(BIOS[id].name,'을','를')} 찾았어요. ${BIOS[id].log}`,'b:'+id);save();}
-          renderE2();setTimeout(()=>encounter(id),1600);}
-        else toast($('#digToast'),'흙이 파였어요! 한 번 더 파 보세요.');}});
+          renderE2();setTimeout(()=>encounter(id),1300);}
+        else toast($('#digToast'),'흙 속에서 무언가 꿈틀! 한 번 더 파 보세요.');}});
   }
   DIG.reset=()=>{ /* 다시 시작할 때는 페이지를 새로 만든다 */ location.reload(); };
   DIG.ctl=ctl;DIG.crit=crit;
@@ -1112,13 +1109,13 @@ function initDig(){
       else{o.position.x=base.x+Math.sin(t*.15)*.3;o.position.y=dH(o.position.x,base.z);animCreature(o,t,1);}
       if(c.happy){c.happy-=dt;o.position.y+=Math.abs(Math.sin(c.happy*10))*.12;}});
     /* 땅속 생물 올라오기 */
-    BURIED.forEach(b=>{const c=crit[b.id];if(!c.obj.visible)return;if(c.rise>0&&c.rise<1){c.rise=Math.min(1,c.rise+dt*1.2);}const y0=dH(b.x,b.z);c.obj.position.y=lerp(-.7,y0-.25,easeOut(c.rise))+(c.rise>=1?Math.sin(t*2)*.02:0);
+    BURIED.forEach(b=>{const c=crit[b.id];if(!c.obj.visible)return;if(c.rise>0&&c.rise<1){c.rise=Math.min(1,c.rise+dt*1.1);}const y0=dH(b.x,b.z);c.obj.position.y=lerp(-.7,y0-.25,easeOut(c.rise))+(c.rise>=1?Math.sin(t*2)*.02:0);
       if(b.id==='razor')c.obj.rotation.z=lerp(Math.PI/2,.5,easeOut(c.rise));animCreature(c.obj,t,1);});
     /* 호미질 */
-    if(swing){swing.t+=dt;const total=swing.strokes*STROKE+.25;const si=Math.min(swing.strokes-1,Math.floor(swing.t/STROKE));const ph=clamp((swing.t-si*STROKE)/STROKE,0,1);
+    if(swing){swing.t+=dt;const total=swing.strokes*STROKE+.12;const si=Math.min(swing.strokes-1,Math.floor(swing.t/STROKE));const ph=clamp((swing.t-si*STROKE)/STROKE,0,1);
       const dir=swing.dir;const away=dir.clone().negate();const yaw=Math.atan2(away.x,away.z);const gy=dH(swing.x,swing.z)+Math.min(0,...[0]);
       let h,tilt,offv;
-      if(swing.t>=swing.strokes*STROKE){const q=clamp((swing.t-swing.strokes*STROKE)/.25,0,1);h=lerp(.7,1.2,q);tilt=-.4;offv=.25;}
+      if(swing.t>=swing.strokes*STROKE){const q=clamp((swing.t-swing.strokes*STROKE)/.12,0,1);h=lerp(.7,1.2,q);tilt=-.4;offv=.25;}
       else if(ph<.32){const q=easeOut(ph/.32);h=lerp(.7,1.0,q);tilt=lerp(-.5,-.3,q);offv=lerp(.1,-.38,q);}
       else if(ph<.44){const q=(ph-.32)/.12;h=lerp(1.0,.36,q*q);tilt=lerp(-.3,-.98,q);offv=-.34;}
       else if(ph<.82){const q=(ph-.44)/.38;h=lerp(.36,.42,q);tilt=lerp(-.98,-.6,q);offv=lerp(-.34,.26,easeOut(q));if(Math.random()<.35)throwClods(swing.x+dir.x*offv,gy,swing.z+dir.z*offv,dir,1);}
