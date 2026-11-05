@@ -5,16 +5,17 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>버들 갯벌 탐험대</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
 /* Layout: 하늘-바다-펄 띠의 색으로 짠 탐험 무대. 3D 무대가 화면의 주인공이고, 위에는 늘 '지금 할 일'이 떠 있다 */
 :root{
   color-scheme:light;
-  --paper:#fffaf1; --sand:#f3e7d2; --mud:#6e5a47; --mud-lt:#b59f86; --mud-dk:#4a3a2d;
-  --sea:#2f8f98; --sea-lt:#cfeef0; --sky:#e6f5f6; --ink:#2b241e; --ink-soft:#6a5d51;
-  --crab:#e2673b; --sun:#f4c443; --good:#3a9459; --line:#e3d4bd;
-  --f-disp:"Jua","Malgun Gothic","맑은 고딕",system-ui,sans-serif;
-  --f-body:"Gowun Dodum","Malgun Gothic","맑은 고딕",system-ui,sans-serif;
+  --paper:#f4f8f9; --sand:#f1ece4; --mud:#6e5a47; --mud-lt:#b59f86; --mud-dk:#3b2e24;
+  --sea:#14808c; --sea-lt:#e3f3f4; --sky:#eef7f8; --ink:#1d2529; --ink-soft:#5d6a70;
+  --crab:#f2643a; --sun:#ffc531; --good:#22985a; --line:#e2e8ea; --card:#ffffff;
+  --shadow:0 1px 2px rgba(20,40,50,.05),0 8px 24px rgba(20,40,50,.07);
+  --f-disp:"Pretendard Variable",Pretendard,"Malgun Gothic","맑은 고딕",system-ui,sans-serif;
+  --f-body:"Pretendard Variable",Pretendard,"Malgun Gothic","맑은 고딕",system-ui,sans-serif;
   --r:18px;
 }
 *{box-sizing:border-box}
@@ -273,6 +274,108 @@ textarea#names{width:100%;min-height:150px;font:inherit;font-size:17px;border:2p
 .small{font-size:15px;color:var(--ink-soft)}
 .right{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:14px;align-items:center}
 .right .why-lock{font-size:15px;color:var(--crab)}
+
+/* ===== 정돈된 화면 ===== */
+body{font-size:17px;letter-spacing:-.01em;-webkit-font-smoothing:antialiased;word-break:keep-all}
+h1,h2,h3,.btn,.chip,.tool,.opt,.counter,.tag,.lab,.brand,.team h3,.badge b{font-weight:700;letter-spacing:-.025em}
+.top{border-bottom:0;padding:10px 0 14px}
+.top .brand{font-size:19px;font-weight:800;color:var(--ink)}
+.steps button{border:0;background:#e7edef;color:var(--ink-soft);font-weight:700;font-size:15px;width:36px;height:36px}
+.steps button.on{background:var(--ink);color:#fff}
+.steps button.ok{background:var(--good)}
+.steps button.on.ok{box-shadow:0 0 0 3px #bfe6cf}
+.tbar{border:0;background:#fff7dc;border-radius:12px}
+.todo,.panel,.mcard,.join,.deck,.badge,.dexc.got,.key,.stu,.mbox,.tool,.tide,.zoom button,.say{border:0!important;box-shadow:var(--shadow)}
+.todo,.panel,.join,.deck{border-radius:20px}
+.todo{padding:16px 20px}
+.todo .tag{font-size:14px;font-weight:700;color:var(--sea)}
+.todo h2{font-size:28px;font-weight:800;color:var(--ink);margin-top:2px}
+.checks li{border:0;background:#f1f4f5;font-size:15px;padding:5px 14px 5px 7px}
+.checks li i{border-color:#c5cfd3}
+.checks li.now{background:#fff0ea;color:#c2441c}
+.checks li.done{background:#e6f5ec}
+.btn{border-radius:14px;font-weight:700;font-size:18px;padding:13px 24px;box-shadow:0 4px 14px rgba(242,100,58,.28)}
+.btn:active{transform:translateY(1px);box-shadow:none}
+.btn.crab{background:var(--crab);box-shadow:0 6px 18px rgba(242,100,58,.3)}
+.btn.sea{background:var(--sea);box-shadow:0 6px 18px rgba(20,128,140,.25)}
+.btn.ghost{background:#eef2f3;color:var(--ink);box-shadow:none}
+.btn[disabled]{opacity:.4;box-shadow:none}
+@keyframes ready{0%,100%{transform:scale(1)}50%{transform:scale(1.04);box-shadow:0 6px 18px rgba(242,100,58,.35),0 0 0 8px rgba(242,100,58,.14)}}
+.say{background:#f1f4f5}
+.hero{background:linear-gradient(180deg,#d6eef2 0%,#e4f3f5 100%);border-radius:28px;padding:36px 0 0;box-shadow:var(--shadow)}
+.hero>*:not(canvas){margin-left:24px;margin-right:24px}
+.hero .who{background:#fff;font-weight:700;font-size:15px;color:var(--ink);box-shadow:var(--shadow)}
+.hero h1{font-size:clamp(46px,9vw,92px);font-weight:900;letter-spacing:-.05em;color:var(--ink);margin:14px 0 6px}
+.hero h1 b{color:var(--crab);font-weight:900}
+.hero .sub{font-size:19px;font-weight:600;color:#2f3b40}
+.hero .unit{font-size:14px;color:#4e5a5f}
+#heroCanvas{height:250px;margin-top:6px}
+.join{padding:22px 24px}
+.join label,.join .lb{font-weight:700;font-size:17px}
+.join input{border:1.5px solid var(--line);border-radius:12px;font-size:19px;background:#fbfcfc}
+.join input:focus{border-color:var(--sea);outline:0}
+.chip{border:0;background:#eef2f3;font-weight:700;font-size:17px;padding:8px 16px}
+.chip.on{background:var(--sea)}
+.homefoot button{border:0;box-shadow:var(--shadow);background:#fff}
+.homefoot button.t{background:#fff7dc;color:#8a6510}
+.mcard{border-radius:20px;padding:20px}
+.mcard .n{font-size:14px}
+.mcard h3{font-size:22px;color:var(--ink);font-weight:800}
+.mcard.next{box-shadow:0 0 0 3px var(--crab),var(--shadow)}
+.mcard.done{box-shadow:0 0 0 2px #bfe6cf,var(--shadow)}
+.stage{border:0;border-radius:20px;box-shadow:var(--shadow)}
+.lab.sea{font-weight:800}
+.lab.flat{border:0;background:var(--good);color:#fff;font-weight:700;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.hint{background:rgba(29,37,41,.75);backdrop-filter:blur(6px);font-size:14px}
+.toast{background:rgba(29,37,41,.88);font-weight:600}
+.info{background:#f6f2ec;border-radius:16px}
+.info h3{color:var(--ink);font-weight:800}
+.quiz{border-top:1px solid var(--line)}
+.opt{border:1.5px solid var(--line);background:#fff;font-weight:700}
+.opt.right{border-color:var(--good);background:#e6f5ec;color:#156b3e}
+.opt.wrong{border-color:var(--crab);background:#fff0ea}
+.why{background:var(--sky);border-radius:14px}
+.why b{font-weight:800;font-size:17px}
+.tool{border-radius:14px;font-size:17px;padding:8px 16px;outline:3px solid transparent}
+.tool.on{outline-color:var(--crab);background:#fff}
+.tide{border-radius:14px}
+.tide.need{outline:3px solid var(--crab)}
+.dexc{border:1.5px dashed #d5dde0;border-radius:16px;background:#fafcfc}
+.dexc.got{background:#fff}
+.dexc .nm{font-weight:700}
+.mbox{border-radius:26px;padding:20px}
+.viewer{background:radial-gradient(circle at 50% 38%,#ffffff 0,#e8f3f2 75%);border-radius:20px}
+.mtxt h3{font-size:30px;font-weight:800}
+.mtxt .where{background:#f1f4f5;font-weight:600}
+.tabs button{border:0;background:#eef2f3;font-weight:700}
+.tabtxt{background:#f6f8f9;border-radius:14px}
+.observe{background:#fff7dc}
+.reg .new{font-weight:800}
+.reg .stamp{font-weight:900}
+.slide{border-radius:16px}
+.deck.cur{box-shadow:0 0 0 3px var(--crab),var(--shadow)}
+.deck.done{box-shadow:0 0 0 2px #bfe6cf,var(--shadow)}
+.deck .dh h3{color:var(--ink);font-weight:800}
+.log li{background:#f6f8f9}
+.key{background:#fff}
+.frame input,.frame textarea{border:1.5px solid var(--line)}
+.frame label{color:var(--ink);font-weight:700}
+.clue{border:0;background:#eef6f7;color:var(--sea);font-weight:600}
+.example{background:var(--sky)}
+.badge{border-radius:20px}
+.badge.on{box-shadow:0 0 0 3px var(--crab),var(--shadow);background:#fff}
+.card{border:0;border-radius:28px;box-shadow:0 10px 40px rgba(20,40,50,.15)}
+.card .band{background:linear-gradient(135deg,#14808c 0%,#1f9aa5 60%,#7cc9c5 100%)}
+.card .band h2{font-weight:800}
+.stat{background:#f4f7f8}
+.stat b{font-weight:800}
+.card blockquote{background:#fbf8f4}
+.show-t{font-weight:800}
+.team{border-radius:20px;box-shadow:var(--shadow)}
+.team .pts{font-weight:900}
+.pill{font-weight:700;font-size:16px}
+.stu{border-radius:14px}
+.stu .nm{font-weight:700}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -647,9 +750,9 @@ function toScreen(v,st){const p=v.clone().project(st.camera);return{x:(p.x+1)/2*
 /* ================= 첫 화면 3D: 갯벌 위 농게 ================= */
 let HERO=null;
 function initHero(){
-  if(!HAS3D)return; HERO=makeStage($('#heroCanvas'),32,{alpha:true}); const sc=HERO.scene; HERO.renderer.setClearColor(0x000000,0);
-  lights(sc,{shadow:4,pos:[3,6,4],hemi:1,sun:.9});
-  const g=new T.PlaneGeometry(40,12,120,30);g.rotateX(-Math.PI/2);const p=g.attributes.position;for(let i=0;i<p.count;i++)p.setY(i,.03*Math.sin(p.getX(i)*3)+.02*Math.sin(p.getZ(i)*5));g.computeVertexNormals();
+  if(!HAS3D)return; HERO=makeStage($('#heroCanvas'),32); const sc=HERO.scene; sc.background=new T.Color(0xe4f3f5); sc.fog=new T.Fog(0xe4f3f5,6,16);
+  lights(sc,{shadow:4,pos:[3,6,4],hemi:.7,sun:.8});
+  const g=new T.PlaneGeometry(60,30,160,60);g.rotateX(-Math.PI/2);const p=g.attributes.position;for(let i=0;i<p.count;i++)p.setY(i,.03*Math.sin(p.getX(i)*3)+.02*Math.sin(p.getZ(i)*5));g.computeVertexNormals();
   const mud=mesh(g,M(0x9c8268,{roughness:.45}));mud.castShadow=false;sc.add(mud);
   const a=crab({body:0x6b6f4a,claw:0xe0472a,big:true});a.position.set(-.6,0,.2);a.scale.setScalar(.9);sc.add(a);
   const b=crab({body:0x8a7a5e,claw:0x8a7a5e});b.position.set(1.3,0,-.3);b.scale.setScalar(.7);sc.add(b);
@@ -909,24 +1012,44 @@ function initDig(){
     const mats=[];m.traverse(o=>{if(o.isMesh&&o.material&&o.material.color){o.material=o.material.clone();mats.push({m:o.material,c:o.material.color.clone()});}});
     crit[s.id]={obj:m,mats,reveal:0,home:new T.Vector3(s.x,0,s.z),s};});
   BURIED.forEach(b=>{const m=MAKERS[b.id]();m.scale.setScalar(.75);m.position.set(b.x,-.7,b.z);m.visible=false;sc.add(m);crit[b.id]={obj:m,buried:true,b,rise:0};});
-  /* 호미 */
-  const homi=new T.Group();const wood=M(0x8a5a2b,{roughness:.7}),iron=M(0x8f9aa0,{roughness:.35,metalness:.6});
-  homi.add(limb(new T.Vector3(0,.0,0),new T.Vector3(0,.55,.0),.035,.03,wood));
-  const neck=limb(new T.Vector3(0,0,0),new T.Vector3(.08,-.12,.12),.014,.014,iron);homi.add(neck);
-  const bs=new T.Shape();bs.moveTo(0,0);bs.quadraticCurveTo(.12,.05,.22,.2);bs.quadraticCurveTo(.06,.2,0,0);
-  const blade=mesh(new T.ExtrudeGeometry(bs,{depth:.012,bevelEnabled:false}),iron);blade.position.set(.06,-.14,.1);blade.rotation.set(-1.1,0,-.6);homi.add(blade);
-  homi.visible=false;sc.add(homi);
-  /* 흙 튀기기 */
-  const parts=[];const pM=M(0x5c4536);for(let i=0;i<26;i++){const p=mesh(new T.SphereGeometry(.03+Math.random()*.02,6,5),pM);p.visible=false;sc.add(p);parts.push({m:p,v:new T.Vector3(),life:0});}
-  const piles=[];
-  function burst(x,y,z){parts.forEach(p=>{p.m.visible=true;p.m.position.set(x,y+.05,z);p.v.set((Math.random()-.5)*2,1.2+Math.random()*1.4,(Math.random()-.5)*2);p.life=.9;});}
-  function digAt(x,z,r,depth){for(let i=0;i<N;i++){const d=Math.hypot(pos.getX(i)-x,pos.getZ(i)-z);if(d<r){off[i]=Math.min(off[i],-depth*smooth(r,r*.25,d));pos.setY(i,base[i]+off[i]);paint(i);}}pos.needsUpdate=true;g.attributes.color.needsUpdate=true;g.computeVertexNormals();}
-  function addPile(x,z,k){const m=mesh(new T.SphereGeometry(.25,14,8,0,Math.PI*2,0,Math.PI/2),castM);m.scale.set(1,.3*k,1);m.position.set(x+.55,dH(x+.55,z+.2)-.01,z+.2);sc.add(m);piles.push(m);}
-  let swing=null;
-  function swingHomi(x,z){homi.visible=true;swing={t:0,x,z};}
+  /* 호미: 손잡이, 슴베, 세모난 날 */
+  const homi=new T.Group();const wood=M(0xb07a43,{roughness:.55}),iron=M(0x9aa4aa,{roughness:.3,metalness:.55,emissive:0x1a1d1f}),edge=M(0xe3e8eb,{roughness:.15,metalness:.6,emissive:0x222222});
+  homi.add(limb(new T.Vector3(0,.02,0),new T.Vector3(0,.78,0),.055,.046,wood));
+  const knob=mesh(new T.SphereGeometry(.05,12,8),wood);knob.position.set(0,.78,0);homi.add(knob);
+  const ring=mesh(new T.CylinderGeometry(.06,.06,.06,16),iron);ring.position.set(0,.04,0);homi.add(ring);
+  homi.add(limb(new T.Vector3(0,.02,0),new T.Vector3(0,-.06,-.08),.02,.017,iron));
+  const bs=new T.Shape();bs.moveTo(-.025,0);bs.lineTo(.025,0);bs.quadraticCurveTo(.13,.06,.11,.17);bs.quadraticCurveTo(.05,.26,0,.32);bs.quadraticCurveTo(-.03,.16,-.025,0);
+  const blade=mesh(new T.ExtrudeGeometry(bs,{depth:.016,bevelEnabled:true,bevelThickness:.004,bevelSize:.004,bevelSegments:1}),iron);
+  blade.rotation.set(-1.88,0,0);blade.position.set(0,-.06,-.08);homi.add(blade);
+  const tipEdge=mesh(new T.ExtrudeGeometry(bs,{depth:.005,bevelEnabled:false}),edge);tipEdge.rotation.copy(blade.rotation);tipEdge.position.set(0,-.066,-.084);tipEdge.scale.set(1.04,1.03,1);homi.add(tipEdge);
+  homi.scale.setScalar(1.55);homi.rotation.order='YXZ';homi.visible=false;sc.add(homi);
+  /* 흙덩이: 튀었다가 떨어져 그대로 남는다 */
+  const clodMs=[0x4a3729,0x5c4536,0x6b523f,0x3c2d23].map(c=>M(c,{roughness:.55}));const clods=[];
+  function throwClods(x,y,z,dir,count){for(let i=0;i<count;i++){let c=clods.find(k=>!k.alive&&k.done);if(!c){if(clods.length>140){c=clods.shift();sc.remove(c.m);}c={m:mesh(new T.DodecahedronGeometry(.035+Math.random()*.045,0),clodMs[i%4])};sc.add(c.m);clods.push(c);}
+    c.m.visible=true;c.m.position.set(x+(Math.random()-.5)*.15,y+.04,z+(Math.random()-.5)*.15);c.m.scale.set(1,.8+Math.random()*.4,1);c.m.rotation.set(Math.random()*6,Math.random()*6,0);
+    const sp=.9+Math.random()*1.3;c.v=new T.Vector3(dir.x*sp+(Math.random()-.5)*.9,1.1+Math.random()*1.6,dir.z*sp+(Math.random()-.5)*.9);c.spin=new T.Vector3(Math.random()*8,Math.random()*8,0);c.alive=true;c.done=false;}}
+  /* 물방울 */
+  const dropM=new T.MeshStandardMaterial({color:0x7d8a7c,roughness:.1,metalness:.1,transparent:true,opacity:.8});const drops=[];
+  function splash(x,y,z){for(let i=0;i<14;i++){const d=mesh(new T.SphereGeometry(.018,6,5),dropM);d.position.set(x,y,z);sc.add(d);drops.push({m:d,v:new T.Vector3((Math.random()-.5)*1.4,.8+Math.random()*1.2,(Math.random()-.5)*1.4),life:.8});}}
+  function digAt(x,z,r,depth){for(let i=0;i<N;i++){const d=Math.hypot(pos.getX(i)-x,pos.getZ(i)-z);if(d<r){const k=smooth(r,r*.2,d);const rough=1+(noi[i]-.5)*.35;off[i]=Math.min(off[i],-depth*k*rough);pos.setY(i,base[i]+off[i]);paint(i);}}pos.needsUpdate=true;g.attributes.color.needsUpdate=true;g.computeVertexNormals();}
+  const piles={};
+  function growPile(id,x,z,dir,k){let p=piles[id];const px=x+dir.x*.75,pz=z+dir.z*.75;if(!p){p=mesh(new T.SphereGeometry(.3,16,8,0,Math.PI*2,0,Math.PI/2),castM);p.position.set(px,dH(px,pz)-.02,pz);p.scale.set(.2,.05,.2);sc.add(p);piles[id]=p;p.userData.goal=new T.Vector3(.2,.05,.2);}
+    p.userData.goal=new T.Vector3(Math.min(1.25,.55+k*.35),Math.min(.55,.18+k*.15),Math.min(1.1,.5+k*.3));}
+  const seeps={};
+  function seep(id,x,z){if(seeps[id])return;const w=new T.Mesh(new T.CircleGeometry(.42,28),new T.MeshStandardMaterial({color:0x5d6b5e,roughness:.05,metalness:.1,transparent:true,opacity:0}));w.rotation.x=-Math.PI/2;w.position.set(x,dH(x,z)-.4,z);sc.add(w);seeps[id]={m:w,t:0,y0:dH(x,z)-.4,y1:dH(x,z)-.16};w.renderOrder=2;}
+  /* 흙 소리 */
+  let AC=null;
+  function thud(strong){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const t0=AC.currentTime;const len=.22;const buf=AC.createBuffer(1,AC.sampleRate*len,AC.sampleRate);const d=buf.getChannelData(0);for(let i=0;i<d.length;i++){const k=i/d.length;d[i]=(Math.random()*2-1)*Math.pow(1-k,2.2);}
+    const src=AC.createBufferSource();src.buffer=buf;const f=AC.createBiquadFilter();f.type='lowpass';f.frequency.setValueAtTime(strong?900:650,t0);f.frequency.exponentialRampToValueAtTime(160,t0+len);const gn=AC.createGain();gn.gain.setValueAtTime(.55,t0);gn.gain.exponentialRampToValueAtTime(.001,t0+len);src.connect(f).connect(gn).connect(AC.destination);src.start(t0);
+    const o=AC.createOscillator();o.type='sine';o.frequency.setValueAtTime(140,t0);o.frequency.exponentialRampToValueAtTime(55,t0+.12);const og=AC.createGain();og.gain.setValueAtTime(.35,t0);og.gain.exponentialRampToValueAtTime(.001,t0+.14);o.connect(og).connect(AC.destination);o.start(t0);o.stop(t0+.15);}catch(e){}}
+  /* 호미질: 들어 올리기, 내리찍기, 몸 쪽으로 끌어당기기를 두 번 */
+  let swing=null,shake=0;
+  function towardCam(x,z){const c=DIG.camera.position;const v=new T.Vector3(c.x-x,0,c.z-z);if(v.lengthSq()<1e-4)v.set(0,0,1);return v.normalize();}
+  function swingHomi(x,z,opts={}){const dir=towardCam(x,z);homi.visible=true;swing={t:0,x,z,dir,strokes:opts.strokes||2,onStrike:opts.onStrike,onEnd:opts.onEnd,hit:0};}
+  const STROKE=.62;
   /* 상태 되살리기 */
   function restore(){
-    Object.entries(S.dug).forEach(([id,n])=>{const b=BURIED.find(x=>x.id===id);if(!b)return;digAt(b.x,b.z,.75,n>=2?.45:.22);addPile(b.x,b.z,n>=2?1.4:.8);if(n>=2){clueObjs[id].visible=false;const c=crit[id];c.obj.visible=true;c.obj.position.y=dH(b.x,b.z)-.3;c.rise=1;}});
+    Object.entries(S.dug).forEach(([id,n])=>{const b=BURIED.find(x=>x.id===id);if(!b)return;digAt(b.x,b.z,.75,n>=2?.45:.22);const dir=new T.Vector3(0,0,1);growPile(id,b.x,b.z,dir,n*2);const p=piles[id];p.scale.copy(p.userData.goal);if(n>=2){clueObjs[id].visible=false;seep(id,b.x,b.z);seeps[id].t=1;const c=crit[id];c.obj.visible=true;c.obj.position.y=dH(b.x,b.z)-.3;c.rise=1;}});
     SURF.forEach(s=>{if(S.bios.includes(s.id))crit[s.id].reveal=1;});
   }
   restore();
@@ -952,17 +1075,24 @@ function initDig(){
     if(tool==='homi'){
       if(bdB<80){digBuried(bestB);return;}
       if(bd<80){toast($('#digToast'),'땅 위에 있는 생물이에요. 돋보기로 찾아볼까요?');return;}
-      RC.setFromCamera(ndc(e,canvas),DIG.camera);const h=RC.intersectObject(mud)[0];if(h){swingHomi(h.point.x,h.point.z);burst(h.point.x,h.point.y,h.point.z);}
+      RC.setFromCamera(ndc(e,canvas),DIG.camera);const h=RC.intersectObject(mud)[0];if(h&&!swing){const hx=h.point.x,hz=h.point.z;swingHomi(hx,hz,{strokes:1,onStrike:(dir)=>{thud(false);throwClods(hx,dH(hx,hz),hz,dir,5);digAt(hx,hz,.3,.06);}});}
       toast($('#digToast'),'여기에는 흔적이 없어요. 구멍이나 흙더미 같은 흔적을 찾아 파 봐요.');}
   }
   function findSurface(id){const c=crit[id];c.reveal=1;c.happy=1.2;if(!S.bios.includes(id)){S.bios.push(id);addLog('bio',`${BIOS[id].where}에서 ${josa(BIOS[id].name,'을','를')} 찾았어요. ${BIOS[id].log}`,'b:'+id);save();}renderE2();setTimeout(()=>encounter(id),700);}
   function digBuried(id){
+    if(swing)return;
     const b=BURIED.find(x=>x.id===id);const n=(S.dug[id]||0)+1;S.dug[id]=n;save();
-    swingHomi(b.x,b.z);setTimeout(()=>{burst(b.x,dH(b.x,b.z),b.z);digAt(b.x,b.z,.75,n>=2?.45:.22);addPile(b.x,b.z,n>=2?1.4:.8);
-      if(n>=2){clueObjs[id].visible=false;const c=crit[id];c.obj.visible=true;c.obj.position.y=-.7;c.rise=0.001;
-        if(!S.bios.includes(id)){S.bios.push(id);addLog('bio',`${BIOS[id].clue} 흔적을 호미로 파서 ${josa(BIOS[id].name,'을','를')} 찾았어요. ${BIOS[id].log}`,'b:'+id);save();}
-        renderE2();setTimeout(()=>encounter(id),1400);}
-      else toast($('#digToast'),'흙이 파였어요! 한 번 더 파 보세요.');},350);
+    ctl.fly([b.x,0,b.z+.4],Math.min(ctl.s.dist,7.2),undefined,Math.min(ctl.s.pol,1.0));
+    let k=0;
+    swingHomi(b.x,b.z,{strokes:2,onStrike:(dir)=>{k++;const step=(n-1)*2+k;thud(step>=3);shake=.18;
+        digAt(b.x,b.z,.78,step>=4?.46:step>=3?.36:step>=2?.24:.13);throwClods(b.x,dH(b.x,b.z),b.z,dir,9+k*3);growPile(id,b.x,b.z,dir,step);
+        if(step===2)clueObjs[id].visible=false;
+        seep(id,b.x,b.z);if(step>=3)splash(b.x,dH(b.x,b.z)-.15,b.z);},
+      onEnd:()=>{
+        if(n>=2){const c=crit[id];c.obj.visible=true;c.obj.position.y=-.7;c.rise=0.001;
+          if(!S.bios.includes(id)){S.bios.push(id);addLog('bio',`${BIOS[id].clue} 흔적을 호미로 파서 ${josa(BIOS[id].name,'을','를')} 찾았어요. ${BIOS[id].log}`,'b:'+id);save();}
+          renderE2();setTimeout(()=>encounter(id),1600);}
+        else toast($('#digToast'),'흙이 파였어요! 한 번 더 파 보세요.');}});
   }
   DIG.reset=()=>{ /* 다시 시작할 때는 페이지를 새로 만든다 */ location.reload(); };
   DIG.ctl=ctl;DIG.crit=crit;
@@ -984,9 +1114,23 @@ function initDig(){
     /* 땅속 생물 올라오기 */
     BURIED.forEach(b=>{const c=crit[b.id];if(!c.obj.visible)return;if(c.rise>0&&c.rise<1){c.rise=Math.min(1,c.rise+dt*1.2);}const y0=dH(b.x,b.z);c.obj.position.y=lerp(-.7,y0-.25,easeOut(c.rise))+(c.rise>=1?Math.sin(t*2)*.02:0);
       if(b.id==='razor')c.obj.rotation.z=lerp(Math.PI/2,.5,easeOut(c.rise));animCreature(c.obj,t,1);});
-    /* 호미 휘두르기 */
-    if(swing){swing.t+=dt*2.6;const k=swing.t;const y=dH(swing.x,swing.z);homi.position.set(swing.x-.15,y+.45-Math.sin(Math.min(1,k)*Math.PI)*.35,swing.z-.1);homi.rotation.set(-.6+Math.sin(Math.min(1,k)*Math.PI)*1.1,.4,.2);if(k>1.4){homi.visible=false;swing=null;}}
-    parts.forEach(p=>{if(p.life<=0){p.m.visible=false;return;}p.life-=dt;p.v.y-=6*dt;p.m.position.addScaledVector(p.v,dt);});
+    /* 호미질 */
+    if(swing){swing.t+=dt;const total=swing.strokes*STROKE+.25;const si=Math.min(swing.strokes-1,Math.floor(swing.t/STROKE));const ph=clamp((swing.t-si*STROKE)/STROKE,0,1);
+      const dir=swing.dir;const away=dir.clone().negate();const yaw=Math.atan2(away.x,away.z);const gy=dH(swing.x,swing.z)+Math.min(0,...[0]);
+      let h,tilt,offv;
+      if(swing.t>=swing.strokes*STROKE){const q=clamp((swing.t-swing.strokes*STROKE)/.25,0,1);h=lerp(.7,1.2,q);tilt=-.4;offv=.25;}
+      else if(ph<.32){const q=easeOut(ph/.32);h=lerp(.7,1.0,q);tilt=lerp(-.5,-.3,q);offv=lerp(.1,-.38,q);}
+      else if(ph<.44){const q=(ph-.32)/.12;h=lerp(1.0,.36,q*q);tilt=lerp(-.3,-.98,q);offv=-.34;}
+      else if(ph<.82){const q=(ph-.44)/.38;h=lerp(.36,.42,q);tilt=lerp(-.98,-.6,q);offv=lerp(-.34,.26,easeOut(q));if(Math.random()<.35)throwClods(swing.x+dir.x*offv,gy,swing.z+dir.z*offv,dir,1);}
+      else{const q=(ph-.82)/.18;h=lerp(.42,.7,q);tilt=lerp(-.6,-.5,q);offv=lerp(.26,.1,q);}
+      if(ph>=.44&&swing.hit<=si){swing.hit=si+1;swing.onStrike&&swing.onStrike(dir);}
+      homi.position.set(swing.x+dir.x*offv,gy+h,swing.z+dir.z*offv);homi.rotation.set(tilt,yaw,0);
+      if(swing.t>=total){homi.visible=false;const f=swing.onEnd;swing=null;f&&f();}}
+    if(shake>0){shake-=dt;const k=shake*.25;DIG.camera.position.x+=(Math.random()-.5)*k;DIG.camera.position.y+=(Math.random()-.5)*k;}
+    clods.forEach(c=>{if(!c.alive)return;c.v.y-=7.5*dt;c.m.position.addScaledVector(c.v,dt);c.m.rotation.x+=c.spin.x*dt;c.m.rotation.y+=c.spin.y*dt;const gy=dH(c.m.position.x,c.m.position.z)+.015;if(c.v.y<0&&c.m.position.y<=gy){c.m.position.y=gy;c.v.multiplyScalar(.25);c.v.y=Math.abs(c.v.y)*.3;if(c.v.length()<.25){c.alive=false;c.done=false;c.m.scale.y*=.6;}}});
+    for(let i=drops.length-1;i>=0;i--){const d=drops[i];d.life-=dt;d.v.y-=6*dt;d.m.position.addScaledVector(d.v,dt);if(d.life<=0){sc.remove(d.m);drops.splice(i,1);}}
+    Object.values(piles).forEach(p=>{p.scale.lerp(p.userData.goal,Math.min(1,dt*6));});
+    Object.values(seeps).forEach(w=>{if(w.t<1)w.t=Math.min(1,w.t+dt*1.1);w.m.position.y=lerp(w.y0+.12,w.y1,easeOut(w.t))+Math.sin(t*2)*.003;w.m.material.opacity=.6+.3*w.t;});
     birds.forEach((b,i)=>{const u=b.userData;const a=t*.18+u.ph;b.position.set(Math.cos(a)*u.r,3.5+i*.3,-6+Math.sin(a)*3);b.rotation.y=-a;b.children.forEach((w,j)=>w.rotation.z=(j?1:-1)*Math.sin(t*7+u.ph)*.5);});
   };
 }
@@ -1004,7 +1148,7 @@ function renderE2(){
   $('#say2').dataset.say=!S.tideDone?'탐험 2. 지금은 밀물이라 바닷물이 갯벌을 덮고 있어요. 위에 있는 막대를 썰물 쪽으로 끝까지 밀어 보세요.':`돋보기를 고르고 갯벌 위를 천천히 움직여 보세요. 보호색으로 숨은 생물이 또렷하게 보이면 눌러요. 구멍이나 흙더미 같은 흔적은 호미를 골라 두 번 파 보세요. 지금 ${S.bios.length}종을 찾았어요.`;
   $('#c2').textContent=S.bios.length;
   $('#digHint').textContent=!tideOK?'먼저 위의 막대를 썰물 쪽으로 밀어요':tool==='look'?'돋보기나 호미를 골라요 · 끌면 갯벌이 돌아가요':tool==='lens'?'돋보기를 천천히 움직여 숨은 생물을 찾아 눌러요':'구멍이나 흙더미 같은 흔적을 두 번 파요';
-  $('#dex').innerHTML=ORDER.map(k=>{const b=BIOS[k],got=S.bios.includes(k);return `<div class="dexc ${got?'got':''}" ${got?`data-dex="${k}"`:''}>${got?(THUMB[k]?`<img src="${THUMB[k]}" alt="${b.name}">`:'<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="22" fill="#e9f6ed"/><text x="32" y="40" text-anchor="middle" font-family="Jua" font-size="20" fill="#3a9459">찾음</text></svg>'):'<svg viewBox="0 0 64 64"><text x="32" y="44" text-anchor="middle" font-family="Jua" font-size="36" fill="#b59f86">?</text></svg>'}<div class="nm">${got?b.name:'???'}</div><div class="wh">${got?b.where:(b.tool==='lens'?'돋보기로 찾아요':'호미로 찾아요')}</div></div>`;}).join('');
+  $('#dex').innerHTML=ORDER.map(k=>{const b=BIOS[k],got=S.bios.includes(k);return `<div class="dexc ${got?'got':''}" ${got?`data-dex="${k}"`:''}>${got?(THUMB[k]?`<img src="${THUMB[k]}" alt="${b.name}">`:'<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="22" fill="#e9f6ed"/><text x="32" y="40" text-anchor="middle" font-family="Pretendard Variable, Malgun Gothic, sans-serif" font-weight="800" font-size="20" fill="#3a9459">찾음</text></svg>'):'<svg viewBox="0 0 64 64"><text x="32" y="44" text-anchor="middle" font-family="Pretendard Variable, Malgun Gothic, sans-serif" font-weight="800" font-size="36" fill="#b59f86">?</text></svg>'}<div class="nm">${got?b.name:'???'}</div><div class="wh">${got?b.where:(b.tool==='lens'?'돋보기로 찾아요':'호미로 찾아요')}</div></div>`;}).join('');
   lockMsg('#e2lock','#e2next',done2(),`생물을 ${Math.max(0,6-S.bios.length)}종 더 찾아요`);
   renderSteps();
 }
@@ -1105,7 +1249,7 @@ $('#e4next').onclick=()=>{
 };
 
 /* ================= 배지와 완료 카드 ================= */
-function medal(v,c){return `<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M30 6 L44 40 L56 40 L70 6 Z" fill="${c}" opacity=".6"/><circle cx="50" cy="60" r="34" fill="${c}"/><circle cx="50" cy="60" r="27" fill="none" stroke="#fff" stroke-width="3" stroke-dasharray="4 4"/><text x="50" y="70" text-anchor="middle" font-family="Jua" font-size="26" fill="#fff">${v}</text></svg>`;}
+function medal(v,c){return `<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M30 6 L44 40 L56 40 L70 6 Z" fill="${c}" opacity=".6"/><circle cx="50" cy="60" r="34" fill="${c}"/><circle cx="50" cy="60" r="27" fill="none" stroke="#fff" stroke-width="3" stroke-dasharray="4 4"/><text x="50" y="70" text-anchor="middle" font-family="Pretendard Variable, Malgun Gothic, sans-serif" font-weight="800" font-size="26" fill="#fff">${v}</text></svg>`;}
 function renderBadges(){$('#badges').innerHTML=VALUES.map(v=>`<button class="badge ${S.badge===v.k?'on':''}" data-v="${v.k}">${medal(v.k,v.c)}<b style="color:${v.c}">${v.k}</b><span>${v.d}</span></button>`).join('');$('#badge-next').disabled=!S.badge;$('#badge-next').classList.toggle('ready',!!S.badge);}
 $('#badges').addEventListener('click',e=>{const b=e.target.closest('.badge');if(!b)return;S.badge=b.dataset.v;save();renderBadges();const v=VALUES.find(x=>x.k===S.badge);speak(v.k+'. '+v.d+'. 완료 카드 받기를 눌러요.');});
 $('#badge-next').onclick=()=>{if(!S.badge)return;if(!S.doneAt){const d=new Date();S.doneAt=`${d.getMonth()+1}월 ${d.getDate()}일 ${stamp()}`;save();}go('card');};
